@@ -3,7 +3,7 @@ import { Plus, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
 import type { Database } from '@/integrations/supabase/database.types'
-import { fetchAdminEditContext, listAdminProducts } from '@/admin/lib/adminRpc'
+import { fetchAdminEditContext, listAdminProducts, listProductAmenityIds, listProductVariants, adminBulkDelete, adminBulkUpdateProducts, adminDelete } from '@/admin/lib/adminRpc'
 import { useAdminCatalogSync } from '@/admin/hooks/useAdminCatalogSync'
 import { useFormatPrice, useCurrency } from '@/lib/currency'
 import { SLUG_REGEX, slugify } from '@/lib/utils'
@@ -18,11 +18,13 @@ import { GalleryUploadField } from '@/admin/components/GalleryUploadField'
 import { ProductSpecsEditor, parseProductSpecs, type ProductSpec } from '@/admin/components/ProductSpecsEditor'
 import { ProductVariantsEditor, parseVariantRows, type VariantFormRow } from '@/admin/components/ProductVariantsEditor'
 import { ProductFormSteps } from '@/admin/components/ProductFormSteps'
-import { PropertyFieldsEditor, emptyPropertyFields, loadPropertyAmenityIds, propertyFieldsFromRow, propertyFieldsToPayload, syncPropertyAmenities, type PropertyFieldsForm } from '@/admin/components/PropertyFieldsEditor'
+import { PropertyFieldsEditor, emptyPropertyFields, propertyFieldsFromRow, propertyFieldsToPayload, syncPropertyAmenities, type PropertyFieldsForm } from '@/admin/components/PropertyFieldsEditor'
 import { fetchPropertyLookups } from '@/lib/property/propertyLookups'
 import { RichTextEditor } from '@/admin/components/RichTextEditor'
 import { sanitizeMarketingHtml } from '@/lib/sanitizeHtml'
 import { useAdminTablePagination } from '@/admin/useAdminTablePagination'
+import { useAdminAppliedSearch } from '@/admin/hooks/useAdminAppliedSearch'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { useBulkSelection } from '@/admin/hooks/useBulkSelection'
 import { BrandedSelect } from '@/components/ui/BrandedSelect'
 import { adminBtnPrimary, adminBtnSecondary, adminInput, adminLabel } from '@/admin/adminClassNames'
@@ -105,7 +107,7 @@ export function AdminProducts() {
   const [detail, setDetail] = useState<ProductRow | null>(null)
   const [bulkBusy, setBulkBusy] = useState(false)
   const [total, setTotal] = useState(0)
-  const [search, setSearch] = useState('')
+  const { search, setSearch, appliedSearch, applySearch } = useAdminAppliedSearch()
 
   const pagination = useAdminTablePagination(total)
   const pageRows = rows
@@ -125,7 +127,7 @@ export function AdminProducts() {
         listAdminProducts({
           limit: pagination.pageSize,
           offset: pagination.start,
-          search: search.trim() || undefined,
+          search: appliedSearch || undefined,
         }),
         fetchAdminEditContext(),
       ])
@@ -140,11 +142,16 @@ export function AdminProducts() {
     } finally {
       setLoading(false)
     }
-  }, [pagination.pageSize, pagination.start, search])
+  }, [pagination.pageSize, pagination.start, appliedSearch])
 
   useEffect(() => {
     void refresh()
   }, [refresh])
+
+  function submitSearch() {
+    applySearch()
+    pagination.setPage(1)
+  }
 
   function galleryFromRow(row: ProductRow): string[] {
     const urls = Array.isArray(row.gallery_urls) ? (row.gallery_urls as string[]) : []
@@ -152,14 +159,8 @@ export function AdminProducts() {
   }
 
   async function loadVariants(productId: string): Promise<VariantFormRow[]> {
-    const { data, error: fetchError } = await tryGetSupabase()
-      .from('product_variants')
-      .select('*')
-      .eq('product_id', productId)
-      .order('sort_order')
-      .order('name')
-    if (fetchError) throw new Error(fetchError.message)
-    return parseVariantRows(data ?? [])
+    const data = await listProductVariants(productId)
+    return parseVariantRows(data)
   }
 
   function openCreate() {
@@ -205,7 +206,7 @@ export function AdminProducts() {
     })
     setPropertyFields(propertyFieldsFromRow(row))
     try {
-      const amenityIds = await loadPropertyAmenityIds(row.id)
+      const amenityIds = await listProductAmenityIds(row.id)
       setPropertyFields((f) => ({ ...f, amenity_ids: amenityIds }))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load amenities')
@@ -252,7 +253,7 @@ export function AdminProducts() {
     })
     setPropertyFields(propertyFieldsFromRow(row))
     try {
-      const amenityIds = await loadPropertyAmenityIds(row.id)
+      const amenityIds = await listProductAmenityIds(row.id)
       setPropertyFields((f) => ({ ...f, amenity_ids: amenityIds }))
     } catch {
       // duplicate may omit amenities if load fails
@@ -380,15 +381,14 @@ export function AdminProducts() {
 
   async function remove(row: ProductRow) {
     if (!window.confirm(`Delete "${row.name}"?`)) return
-    const supabase = tryGetSupabase()
-    const { error: deleteError } = await supabase.from('products').delete().eq('id', row.id)
-    if (deleteError) {
-      setError(deleteError.message)
-      return
+    try {
+      await adminDelete('products', row.id)
+      toast.success('Property deleted')
+      await refresh()
+      await syncCatalog()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete property')
     }
-    toast.success('Property deleted')
-    await refresh()
-    await syncCatalog()
   }
 
   async function bulkDelete() {
@@ -396,35 +396,34 @@ export function AdminProducts() {
     if (!window.confirm(`Delete ${bulk.selectedIds.length} product(s)?`)) return
     setBulkBusy(true)
     setError(null)
-    const { error: deleteError } = await tryGetSupabase().from('products').delete().in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    if (deleteError) {
-      setError(deleteError.message)
-      return
+    try {
+      await adminBulkDelete('products', bulk.selectedIds)
+      toast.success(`${bulk.selectedIds.length} product(s) deleted`)
+      bulk.clear()
+      await refresh()
+      await syncCatalog()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete products')
+    } finally {
+      setBulkBusy(false)
     }
-    toast.success(`${bulk.selectedIds.length} product(s) deleted`)
-    bulk.clear()
-    await refresh()
-    await syncCatalog()
   }
 
   async function bulkPublish(published: boolean) {
     if (bulk.selectedIds.length === 0) return
     setBulkBusy(true)
     setError(null)
-    const { error: updateError } = await tryGetSupabase()
-      .from('products')
-      .update({ published, updated_at: new Date().toISOString() })
-      .in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    if (updateError) {
-      setError(updateError.message)
-      return
+    try {
+      await adminBulkUpdateProducts(bulk.selectedIds, { published })
+      toast.success(published ? 'Properties published' : 'Properties unpublished')
+      bulk.clear()
+      await refresh()
+      await syncCatalog()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update properties')
+    } finally {
+      setBulkBusy(false)
     }
-    toast.success(published ? 'Properties published' : 'Properties unpublished')
-    bulk.clear()
-    await refresh()
-    await syncCatalog()
   }
 
   const formSteps = useMemo(
@@ -591,7 +590,7 @@ export function AdminProducts() {
     [form, propertyFields, propertyLookups, categories, collections, currency.code],
   )
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>
@@ -619,10 +618,10 @@ export function AdminProducts() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') pagination.setPage(1)
+            if (e.key === 'Enter') submitSearch()
           }}
         />
-        <button type="button" className={adminBtnSecondary} onClick={() => pagination.setPage(1)}>
+        <button type="button" className={adminBtnSecondary} onClick={submitSearch}>
           Search
         </button>
       </div>

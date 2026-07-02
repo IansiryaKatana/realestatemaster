@@ -1,4 +1,4 @@
-import { tryGetSupabase } from '@/integrations/supabase/client'
+import { callRpcItems, callRpcOptionalItem } from '@/lib/rpc/callRpc'
 import type {
   LeaseRow,
   MoveInChecklistRow,
@@ -24,165 +24,68 @@ export const tenancyKeys = {
 }
 
 export async function fetchLeases() {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('leases')
-    .select('*, products(name, slug, property_reference)')
-    .order('created_at', { ascending: false })
-  if (error) throw new Error(error.message)
-  return (data ?? []) as (LeaseRow & { products: { name: string; slug: string; property_reference: string | null } | null })[]
+  return callRpcItems<LeaseRow & { products: { name: string; slug: string; property_reference: string | null } | null }>('rpc_list_leases')
 }
 
 export async function fetchRentInstallments(leaseId?: string) {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  let q = supabase.from('rent_installments').select('*, leases(product_id, tenant_user_id, products(name))').order('due_date')
-  if (leaseId) q = q.eq('lease_id', leaseId)
-  const { data, error } = await q
-  if (error) throw new Error(error.message)
-  return (data ?? []) as RentInstallmentRow[]
+  return callRpcItems<RentInstallmentRow>('rpc_list_rent_installments', {
+    p_lease_id: leaseId ?? null,
+  })
 }
 
 export async function fetchPendingRentPayments() {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('rent_payments')
-    .select('*, rent_installments(due_date, amount, lease_id, leases(products(name)))')
-    .eq('status', 'pending_verification')
-    .order('created_at', { ascending: false })
-  if (error) throw new Error(error.message)
-  return (data ?? []) as RentPaymentRow[]
+  return callRpcItems<RentPaymentRow>('rpc_list_pending_rent_payments')
 }
 
 export async function fetchServiceRequests(type?: 'complaint' | 'maintenance') {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  let q = supabase
-    .from('service_requests')
-    .select('*, products(name)')
-    .order('created_at', { ascending: false })
-  if (type) q = q.eq('request_type', type)
-  const { data, error } = await q
-  if (error) throw new Error(error.message)
-  return (data ?? []) as (ServiceRequestRow & { products: { name: string } | null })[]
+  return callRpcItems<ServiceRequestRow & { products: { name: string } | null }>('rpc_list_service_requests', {
+    p_type: type ?? null,
+  })
 }
 
 export async function fetchPropertyOwners() {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase.from('property_owners').select('*').order('full_name')
-  if (error) throw new Error(error.message)
-  return (data ?? []) as PropertyOwnerRow[]
+  return callRpcItems<PropertyOwnerRow>('rpc_list_property_owners')
 }
 
 export async function fetchTenantActiveLease() {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('leases')
-    .select('*, products(name, slug, image_url, property_reference)')
-    .in('status', ['pending', 'active', 'notice'])
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-  if (error) throw new Error(error.message)
-  return data as (LeaseRow & { products: { name: string; slug: string; image_url: string | null; property_reference: string | null } }) | null
+  const result = await callRpcOptionalItem<
+    LeaseRow & { products: { name: string; slug: string; image_url: string | null; property_reference: string | null } }
+  >('rpc_get_tenant_active_lease', {}, 'lease')
+  return result
 }
 
 export async function fetchTenantInstallments(leaseId: string) {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('rent_installments')
-    .select('*')
-    .eq('lease_id', leaseId)
-    .order('due_date')
-  if (error) throw new Error(error.message)
-  return (data ?? []) as RentInstallmentRow[]
+  return callRpcItems<RentInstallmentRow>('rpc_list_tenant_installments', { p_lease_id: leaseId })
 }
 
 export async function fetchMoveInChecklist(leaseId: string) {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('move_in_checklists')
-    .select('*')
-    .eq('lease_id', leaseId)
-    .maybeSingle()
-  if (error) throw new Error(error.message)
-  return data as MoveInChecklistRow | null
+  const result = await callRpcOptionalItem<MoveInChecklistRow>('rpc_get_move_in_checklist', { p_lease_id: leaseId }, 'checklist')
+  return result
 }
 
 export async function fetchMoveInChecklists() {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('move_in_checklists')
-    .select('*, leases(products(name, property_reference))')
-    .order('created_at', { ascending: false })
-  if (error) throw new Error(error.message)
-  return data ?? []
+  return callRpcItems('rpc_list_move_in_checklists')
 }
 
 export async function fetchTenantDocuments(leaseId: string) {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('tenant_documents')
-    .select('*')
-    .eq('lease_id', leaseId)
-    .order('created_at', { ascending: false })
-  if (error) throw new Error(error.message)
-  return (data ?? []) as TenantDocumentRow[]
+  return callRpcItems<TenantDocumentRow>('rpc_list_tenant_documents', { p_lease_id: leaseId })
 }
 
 export async function fetchLandlordPortfolio(ownerId: string) {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('property_owner_assignments')
-    .select('*, products(id, name, slug, image_url, property_reference, property_status_id)')
-    .eq('property_owner_id', ownerId)
-  if (error) throw new Error(error.message)
-  return data ?? []
+  return callRpcItems('rpc_list_landlord_portfolio', { p_owner_id: ownerId })
 }
 
 export async function fetchLandlordStatements(ownerId: string) {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('owner_statements')
-    .select('*')
-    .eq('property_owner_id', ownerId)
-    .order('period_end', { ascending: false })
-  if (error) throw new Error(error.message)
-  return (data ?? []) as OwnerStatementRow[]
+  return callRpcItems<OwnerStatementRow>('rpc_list_landlord_statements', { p_owner_id: ownerId })
 }
 
 export async function fetchRoleNotifications(role: 'client' | 'tenant' | 'landlord' | 'agent') {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('notifications')
-    .select('*')
-    .eq('recipient_role', role)
-    .order('created_at', { ascending: false })
-    .limit(50)
-  if (error) throw new Error(error.message)
-  return data ?? []
+  return callRpcItems('rpc_list_role_notifications', { p_role: role })
 }
 
 export async function fetchAgentLeases(agentId: string) {
-  const supabase = tryGetSupabase()
-  if (!supabase) throw new Error('Database is not configured')
-  const { data, error } = await supabase
-    .from('leases')
-    .select('*, products(name, property_reference)')
-    .eq('assigned_agent_id', agentId)
-    .in('status', ['active', 'notice'])
-    .order('start_date', { ascending: false })
-  if (error) throw new Error(error.message)
-  return (data ?? []) as (LeaseRow & { products: { name: string; property_reference: string | null } | null })[]
+  return callRpcItems<LeaseRow & { products: { name: string; property_reference: string | null } | null }>(
+    'rpc_list_agent_leases',
+    { p_agent_id: agentId },
+  )
 }

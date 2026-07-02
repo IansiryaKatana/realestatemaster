@@ -2,9 +2,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminDelete, listAdminCoupons } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { AdminSheet } from '@/admin/components/AdminSheet'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { adminBtnPrimary, adminBtnSecondary, adminInput, adminLabel } from '@/admin/adminClassNames'
 import { AdminRowActions, adminTableActionsCellClass, adminTableActionsHeadClass, crudRowActions } from '@/admin/components/AdminRowActions'
@@ -42,10 +44,13 @@ export function AdminCoupons() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const { data, error: fetchError } = await tryGetSupabase().from('coupons').select('*').order('created_at', { ascending: false })
-    if (fetchError) setError(fetchError.message)
-    else setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminCoupons())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load promotions')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { void refresh() }, [refresh])
@@ -91,13 +96,16 @@ export function AdminCoupons() {
 
   async function remove(row: CouponRow) {
     if (!window.confirm(`Delete promotion ${row.code}?`)) return
-    const { error: deleteError } = await tryGetSupabase().from('coupons').delete().eq('id', row.id)
-    if (deleteError) return setError(deleteError.message)
-    toast.success('Promotion deleted')
-    await refresh()
+    try {
+      await adminDelete('coupons', row.id)
+      toast.success('Promotion deleted')
+      await refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete promotion')
+    }
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>

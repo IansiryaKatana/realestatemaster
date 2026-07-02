@@ -2,9 +2,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus, RefreshCw, Save, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { listAdminSiteSettingsRows } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { useCms } from '@/contexts/CmsContext'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { ImageUploadField } from '@/admin/components/ImageUploadField'
 import { RichTextEditor } from '@/admin/components/RichTextEditor'
@@ -40,10 +42,14 @@ export function AdminSiteSettings() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const { data, error: fetchError } = await tryGetSupabase().from('site_settings').select('*').order('key')
-    if (fetchError) setError(fetchError.message)
-    else setEntries((data ?? []).map((row) => ({ key: row.key, value: row.value })))
-    setLoading(false)
+    try {
+      const data = await listAdminSiteSettingsRows()
+      setEntries(data.map((row) => ({ key: row.key, value: row.value })))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load site settings')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -176,7 +182,7 @@ export function AdminSiteSettings() {
     await refetchCms()
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, entries.length)) return <AdminLoadingState />
 
   return (
     <div>

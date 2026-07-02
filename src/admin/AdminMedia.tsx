@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Copy, ExternalLink, RefreshCw, Trash2, Upload } from 'lucide-react'
 import { toast } from 'sonner'
-import { tryGetSupabase } from '@/integrations/supabase/client'
 import type { CmsMediaRow } from '@/admin/lib/adminRpc'
-import { listCmsMedia } from '@/admin/lib/adminRpc'
+import { adminBulkDelete, adminDelete, listCmsMedia } from '@/admin/lib/adminRpc'
 import { uploadCmsMediaFile } from '@/admin/lib/uploadMedia'
 import { AdminBulkToolbar } from '@/admin/components/AdminBulkToolbar'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
@@ -68,28 +67,29 @@ export function AdminMedia() {
 
   async function remove(row: CmsMediaRow) {
     if (!window.confirm(`Delete media "${row.file_name ?? row.id}"?`)) return
-    const { error: deleteError } = await tryGetSupabase().from('cms_media').delete().eq('id', row.id)
-    if (deleteError) {
-      setError(deleteError.message)
-      return
+    try {
+      await adminDelete('cms_media', row.id)
+      toast.success('Media deleted')
+      await refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete media')
     }
-    toast.success('Media deleted')
-    await refresh()
   }
 
   async function bulkDelete() {
     if (bulk.selectedIds.length === 0) return
     if (!window.confirm(`Delete ${bulk.selectedIds.length} media item(s)?`)) return
     setBulkBusy(true)
-    const { error: deleteError } = await tryGetSupabase().from('cms_media').delete().in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    if (deleteError) {
-      setError(deleteError.message)
-      return
+    try {
+      await adminBulkDelete('cms_media', bulk.selectedIds)
+      toast.success(`${bulk.selectedIds.length} media item(s) deleted`)
+      bulk.clear()
+      await refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete media')
+    } finally {
+      setBulkBusy(false)
     }
-    toast.success(`${bulk.selectedIds.length} media item(s) deleted`)
-    bulk.clear()
-    await refresh()
   }
 
   function copyUrl(url: string) {

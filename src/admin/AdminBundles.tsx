@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminBulkDelete, adminDelete, listAdminBundles } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { useAdminCatalogSync } from '@/admin/hooks/useAdminCatalogSync'
 import { SLUG_REGEX, slugify } from '@/lib/utils'
@@ -10,6 +11,7 @@ import { AdminBulkToolbar } from '@/admin/components/AdminBulkToolbar'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { ImageUploadField } from '@/admin/components/ImageUploadField'
 import { RichTextEditor } from '@/admin/components/RichTextEditor'
@@ -112,17 +114,16 @@ export function AdminBundles() {
     }
 
     try {
-      const [bundlesRes, productsRes, variantsRes] = await Promise.all([
-        supabase.from('product_bundles').select('*').order('sort_order'),
+      const [bundles, productsRes, variantsRes] = await Promise.all([
+        listAdminBundles(),
         supabase.from('products').select('id, name, slug, published').order('name'),
         supabase.from('product_variants').select('id, product_id, name, is_active').eq('is_active', true).order('sort_order'),
       ])
 
-      if (bundlesRes.error) throw new Error(bundlesRes.error.message)
       if (productsRes.error) throw new Error(productsRes.error.message)
       if (variantsRes.error) throw new Error(variantsRes.error.message)
 
-      setRows(bundlesRes.data ?? [])
+      setRows(bundles)
       setProducts(productsRes.data ?? [])
 
       const grouped: Record<string, VariantRow[]> = {}
@@ -279,24 +280,31 @@ export function AdminBundles() {
 
   async function remove(row: BundleRow) {
     if (!window.confirm(`Delete "${row.name}"?`)) return
-    const { error: deleteError } = await tryGetSupabase().from('product_bundles').delete().eq('id', row.id)
-    if (deleteError) return setError(deleteError.message)
-    toast.success('Bundle deleted')
-    await refresh()
-    await syncCatalog()
+    try {
+      await adminDelete('product_bundles', row.id)
+      toast.success('Bundle deleted')
+      await refresh()
+      await syncCatalog()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete bundle')
+    }
   }
 
   async function bulkDelete() {
     if (bulk.selectedIds.length === 0) return
     if (!window.confirm(`Delete ${bulk.selectedIds.length} bundle(s)?`)) return
     setBulkBusy(true)
-    const { error: deleteError } = await tryGetSupabase().from('product_bundles').delete().in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    if (deleteError) return setError(deleteError.message)
-    toast.success(`${bulk.selectedIds.length} bundle(s) deleted`)
-    bulk.clear()
-    await refresh()
-    await syncCatalog()
+    try {
+      await adminBulkDelete('product_bundles', bulk.selectedIds)
+      toast.success(`${bulk.selectedIds.length} bundle(s) deleted`)
+      bulk.clear()
+      await refresh()
+      await syncCatalog()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete bundles')
+    } finally {
+      setBulkBusy(false)
+    }
   }
 
   async function bulkSetPublished(published: boolean) {
@@ -321,7 +329,7 @@ export function AdminBundles() {
     }))
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>

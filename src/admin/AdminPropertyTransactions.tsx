@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
 import type { Database } from '@/integrations/supabase/database.types'
 import { AdminLoadingState, AdminInfoBanner } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminSheet } from '@/admin/components/AdminSheet'
 import { AdminClickableTableRow } from '@/admin/components/AdminClickableTableRow'
 import { adminLabel } from '@/admin/adminClassNames'
@@ -152,7 +153,7 @@ export function AdminPropertyTransactions() {
     setDetailLoading(false)
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div className="space-y-4">

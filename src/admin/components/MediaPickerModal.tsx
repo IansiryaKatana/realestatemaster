@@ -30,6 +30,7 @@ export function MediaPickerModal({
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(0)
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [loading, setLoading] = useState(false)
   const [selectedUrl, setSelectedUrl] = useState<string | null>(null)
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
@@ -43,7 +44,7 @@ export function MediaPickerModal({
         limit: PAGE_SIZE,
         offset: page * PAGE_SIZE,
         kind: 'image',
-        search: search.trim() || undefined,
+        search: debouncedSearch || undefined,
       })
       setItems(result.items)
       setTotal(result.total)
@@ -52,7 +53,13 @@ export function MediaPickerModal({
     } finally {
       setLoading(false)
     }
-  }, [page, search])
+  }, [page, debouncedSearch])
+
+  useEffect(() => {
+    if (!open) return
+    const timer = window.setTimeout(() => setDebouncedSearch(search.trim()), 300)
+    return () => window.clearTimeout(timer)
+  }, [search, open])
 
   useEffect(() => {
     if (!open) return
@@ -64,9 +71,8 @@ export function MediaPickerModal({
 
   useEffect(() => {
     if (!open || tab !== 'library') return
-    const timer = window.setTimeout(() => setPage(0), 300)
-    return () => window.clearTimeout(timer)
-  }, [search, open, tab])
+    setPage(0)
+  }, [debouncedSearch, open, tab])
 
   async function handleUpload(file: File | null) {
     if (!file) return

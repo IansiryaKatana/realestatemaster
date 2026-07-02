@@ -12,6 +12,8 @@ import { AdminLoadingState } from '@/admin/components/AdminPageHeading'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { AdminSheet } from '@/admin/components/AdminSheet'
 import { useAdminTablePagination } from '@/admin/useAdminTablePagination'
+import { useAdminAppliedSearch } from '@/admin/hooks/useAdminAppliedSearch'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { BrandedSelect } from '@/components/ui/BrandedSelect'
 import { adminBtnPrimary, adminBtnSecondary, adminInput, adminLabel } from '@/admin/adminClassNames'
 import { AdminClickableTableRow, AdminTableStopCell } from '@/admin/components/AdminClickableTableRow'
@@ -53,7 +55,7 @@ export function AdminOrders() {
   const currency = getCurrencyFromSettings(snapshot.siteSettings)
   const [rows, setRows] = useState<OrderRow[]>([])
   const [total, setTotal] = useState(0)
-  const [search, setSearch] = useState('')
+  const { search, setSearch, appliedSearch, applySearch } = useAdminAppliedSearch()
   const [loading, setLoading] = useState(true)
   const [detail, setDetail] = useState<OrderRow | null>(null)
   const [lineItems, setLineItems] = useState<OrderItemRow[]>([])
@@ -71,14 +73,14 @@ export function AdminOrders() {
       const result = await listAdminOrders({
         limit: pagination.pageSize,
         offset: pagination.start,
-        search: search.trim() || undefined,
+        search: appliedSearch || undefined,
       })
       setRows(result.items)
       setTotal(result.total)
     } finally {
       setLoading(false)
     }
-  }, [pagination.pageSize, pagination.start, search])
+  }, [pagination.pageSize, pagination.start, appliedSearch])
 
   useEffect(() => {
     void refresh()
@@ -175,7 +177,12 @@ export function AdminOrders() {
     void refresh()
   }
 
-  if (loading) return <AdminLoadingState />
+  function submitSearch() {
+    applySearch()
+    pagination.setPage(1)
+  }
+
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   const shippingText = detail ? formatShippingAddress(detail.shipping_address) : null
 
@@ -188,10 +195,10 @@ export function AdminOrders() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') pagination.setPage(1)
+            if (e.key === 'Enter') submitSearch()
           }}
         />
-        <button type="button" className={adminBtnSecondary} onClick={() => pagination.setPage(1)}>
+        <button type="button" className={adminBtnSecondary} onClick={submitSearch}>
           Search
         </button>
       </div>

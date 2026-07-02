@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminDelete, listAdminSocialLinks } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { useCms } from '@/contexts/CmsContext'
 import { AdminSheet } from '@/admin/components/AdminSheet'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { useAdminTablePagination } from '@/admin/useAdminTablePagination'
@@ -48,10 +50,13 @@ export function AdminSocialLinks() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const { data, error: fetchError } = await tryGetSupabase().from('social_links').select('*').order('sort_order')
-    if (fetchError) setError(fetchError.message)
-    else setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminSocialLinks())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load social links')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -113,14 +118,17 @@ export function AdminSocialLinks() {
 
   async function remove(row: Row) {
     if (!window.confirm(`Delete "${row.label}"?`)) return
-    const { error: deleteError } = await tryGetSupabase().from('social_links').delete().eq('id', row.id)
-    if (deleteError) return setError(deleteError.message)
-    toast.success('Social link deleted')
-    await refresh()
-    await refetchCms()
+    try {
+      await adminDelete('social_links', row.id)
+      toast.success('Social link deleted')
+      await refresh()
+      await refetchCms()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete social link')
+    }
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   const FormIcon = getSocialIcon(form.icon)
 

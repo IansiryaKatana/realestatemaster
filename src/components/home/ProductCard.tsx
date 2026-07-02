@@ -7,6 +7,7 @@ import { ProductPrice } from '@/components/product/ProductPrice'
 import { PropertyPriceDisplay } from '@/components/property/PropertyPriceDisplay'
 import { PropertyStats } from '@/components/property/PropertyStats'
 import { PropertyActionButtons } from '@/components/property/PropertyActionButtons'
+import { PropertyCardFilmOverlay } from '@/components/property/PropertyCardFilmOverlay'
 import { AddToCartButton } from '@/components/ecommerce/AddToCartButton'
 import { BuyNowButton } from '@/components/ecommerce/BuyNowButton'
 import { WishlistButton } from '@/components/ecommerce/WishlistButton'
@@ -20,22 +21,27 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <article className="product-card min-w-0 max-w-full">
-      <div className="group relative aspect-[1/0.82] overflow-hidden rounded-[10px] bg-gradient-to-b from-[#f8f8f6] to-[#eeeeea]">
+      <div
+        className={`group relative aspect-[1/0.82] overflow-hidden rounded-[10px] bg-gradient-to-b from-[#f8f8f6] to-[#eeeeea]${isProperty ? ' property-card-media' : ''}`}
+      >
         <Link
           to={isProperty ? '/property/$slug' : '/product/$slug'}
           params={{ slug: product.slug }}
-          className="block h-full w-full"
+          className="absolute inset-0 z-[1] block"
+          aria-label={product.name}
         >
           {product.imageUrl ? (
             <img
               src={product.imageUrl}
-              alt={product.name}
-              className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-[250ms] ease-out group-hover:scale-[1.04]"
+              alt=""
+              aria-hidden="true"
+              className={`h-full w-full object-cover object-center transition-transform duration-[250ms] ease-out group-hover:scale-[1.04]${isProperty ? ' property-card-media__photo' : ''}`}
             />
           ) : null}
         </Link>
+        {isProperty ? <PropertyCardFilmOverlay /> : null}
         {isProperty && (product.listingType || meta?.propertyTypeName) ? (
-          <div className="absolute left-2.5 top-2.5 z-[1] flex flex-wrap gap-1">
+          <div className="absolute left-2.5 top-2.5 z-[3] flex flex-wrap gap-1">
             {product.listingType ? (
               <Badge className="bg-white/95 text-text-brown">
                 {product.listingType === 'rent' ? 'For Rent' : 'For Sale'}
@@ -49,7 +55,7 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
         ) : null}
         {isProperty && meta ? (
-          <div className="absolute bottom-2.5 left-2.5 z-[1] flex flex-wrap gap-1">
+          <div className="absolute bottom-2.5 left-2.5 z-[3] flex flex-wrap gap-1">
             {meta.furnishingName ? (
               <Badge variant="secondary" className="bg-black/60 text-[10px] uppercase text-white hover:bg-black/60">
                 {meta.furnishingName}
@@ -65,7 +71,7 @@ export function ProductCard({ product }: { product: Product }) {
         <WishlistButton
           productId={product.id}
           variant="icon"
-          className="absolute right-2.5 top-2.5 z-[1]"
+          className="absolute right-2.5 top-2.5 z-[3]"
         />
       </div>
 

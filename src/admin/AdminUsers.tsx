@@ -2,11 +2,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminDelete, listAdminUsers } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { AdminModal } from '@/admin/components/AdminModal'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { useAdminTablePagination } from '@/admin/useAdminTablePagination'
 import { BrandedSelect } from '@/components/ui/BrandedSelect'
@@ -46,10 +48,13 @@ export function AdminUsers() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const { data, error: fetchError } = await tryGetSupabase().from('admin_users').select('*').order('created_at', { ascending: false })
-    if (fetchError) setError(fetchError.message)
-    else setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminUsers())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load admin users')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -95,13 +100,16 @@ export function AdminUsers() {
 
   async function remove(row: Row) {
     if (!window.confirm(`Delete admin user ${row.email}?`)) return
-    const { error: deleteError } = await tryGetSupabase().from('admin_users').delete().eq('id', row.id)
-    if (deleteError) return setError(deleteError.message)
-    toast.success('Admin user deleted')
-    await refresh()
+    try {
+      await adminDelete('admin_users', row.id)
+      toast.success('Admin user deleted')
+      await refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete admin user')
+    }
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>

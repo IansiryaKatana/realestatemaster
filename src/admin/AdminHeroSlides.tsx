@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminBulkDelete, adminDelete, listAdminHeroSlides } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { useCms } from '@/contexts/CmsContext'
 import { AdminSheet } from '@/admin/components/AdminSheet'
@@ -9,6 +10,7 @@ import { AdminBulkToolbar } from '@/admin/components/AdminBulkToolbar'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { ImageUploadField } from '@/admin/components/ImageUploadField'
 import { useAdminTablePagination } from '@/admin/useAdminTablePagination'
@@ -60,10 +62,13 @@ export function AdminHeroSlides() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const { data, error: fetchError } = await tryGetSupabase().from('hero_slides').select('*').order('sort_order')
-    if (fetchError) setError(fetchError.message)
-    else setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminHeroSlides())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load hero slides')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { void refresh() }, [refresh])
@@ -136,24 +141,31 @@ export function AdminHeroSlides() {
 
   async function remove(row: Row) {
     if (!window.confirm('Delete this hero slide?')) return
-    const { error: deleteError } = await tryGetSupabase().from('hero_slides').delete().eq('id', row.id)
-    if (deleteError) return setError(deleteError.message)
-    toast.success('Hero slide deleted')
-    await refresh()
-    await refetchCms()
+    try {
+      await adminDelete('hero_slides', row.id)
+      toast.success('Hero slide deleted')
+      await refresh()
+      await refetchCms()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete hero slide')
+    }
   }
 
   async function bulkDelete() {
     if (bulk.selectedIds.length === 0) return
     if (!window.confirm(`Delete ${bulk.selectedIds.length} hero slide(s)?`)) return
     setBulkBusy(true)
-    const { error: deleteError } = await tryGetSupabase().from('hero_slides').delete().in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    if (deleteError) return setError(deleteError.message)
-    toast.success(`${bulk.selectedIds.length} hero slide(s) deleted`)
-    bulk.clear()
-    await refresh()
-    await refetchCms()
+    try {
+      await adminBulkDelete('hero_slides', bulk.selectedIds)
+      toast.success(`${bulk.selectedIds.length} hero slide(s) deleted`)
+      bulk.clear()
+      await refresh()
+      await refetchCms()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete hero slides')
+    } finally {
+      setBulkBusy(false)
+    }
   }
 
   async function bulkSetActive(is_active: boolean) {
@@ -171,7 +183,7 @@ export function AdminHeroSlides() {
     await refetchCms()
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>

@@ -2,9 +2,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
-import { tryGetSupabase } from '@/integrations/supabase/client'
+import { listAdminInvoices } from '@/admin/lib/adminRpc'
+import { useAdminAppliedSearch } from '@/admin/hooks/useAdminAppliedSearch'
 import type { Database } from '@/integrations/supabase/database.types'
 import { AdminLoadingState, AdminInfoBanner } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { useAdminTabActions } from '@/admin/components/AdminTabActionsContext'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { AdminClickableTableRow } from '@/admin/components/AdminClickableTableRow'
@@ -24,44 +26,21 @@ export function AdminInvoices() {
   const formatPrice = useFormatPrice()
   const [rows, setRows] = useState<InvoiceWithMeta[]>([])
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
+  const { search, setSearch, appliedSearch, applySearch } = useAdminAppliedSearch()
   const [detail, setDetail] = useState<InvoiceWithMeta | null>(null)
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const sb = tryGetSupabase()
-    const { data: invoices, error } = await sb
-      .from('invoices')
-      .select('*')
-      .order('issued_at', { ascending: false })
-      .limit(100)
-
-    if (error) {
-      toast.error(error.message)
+    try {
+      const result = await listAdminInvoices({ search: appliedSearch || undefined })
+      setRows(result.items as InvoiceWithMeta[])
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to load invoices')
       setRows([])
+    } finally {
       setLoading(false)
-      return
     }
-
-    const txIds = [...new Set((invoices ?? []).map((inv) => inv.transaction_id))]
-    let txMap = new Map<string, TransactionRow>()
-    if (txIds.length > 0) {
-      const { data: transactions } = await sb.from('property_transactions').select('*').in('id', txIds)
-      txMap = new Map((transactions ?? []).map((tx) => [tx.id, tx]))
-    }
-
-    setRows(
-      (invoices ?? []).map((invoice) => {
-        const tx = txMap.get(invoice.transaction_id)
-        return {
-          ...invoice,
-          transaction_number: tx?.transaction_number ?? null,
-          transaction_status: tx?.status ?? null,
-        }
-      }),
-    )
-    setLoading(false)
-  }, [])
+  }, [appliedSearch])
 
   useEffect(() => {
     void refresh()
@@ -75,17 +54,9 @@ export function AdminInvoices() {
     [refresh],
   )
 
-  const filtered = rows.filter((row) => {
-    const q = search.trim().toLowerCase()
-    if (!q) return true
-    return (
-      row.invoice_number.toLowerCase().includes(q) ||
-      row.client_email.toLowerCase().includes(q) ||
-      (row.transaction_number?.toLowerCase().includes(q) ?? false)
-    )
-  })
+  const filtered = rows
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div className="space-y-4">
@@ -103,7 +74,13 @@ export function AdminInvoices() {
           placeholder="Search invoice #, client, or transaction…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') applySearch()
+          }}
         />
+        <button type="button" className={adminBtnSecondary} onClick={applySearch}>
+          Search
+        </button>
       </div>
 
       <div className="admin-table-frame">

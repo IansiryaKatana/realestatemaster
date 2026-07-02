@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Check, RefreshCw, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { tryGetSupabase } from '@/integrations/supabase/client'
+import { listAdminReviews, adminUpdateReviewStatus, adminDelete } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { useAdminTablePagination } from '@/admin/useAdminTablePagination'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { adminBtnSecondary, adminInput, adminLabel } from '@/admin/adminClassNames'
 import { AdminTableStopCell } from '@/admin/components/AdminClickableTableRow'
 import { AdminRowActions, adminTableActionsCellClass, adminTableActionsHeadClass } from '@/admin/components/AdminRowActions'
@@ -48,37 +49,19 @@ export function AdminReviews() {
   const refresh = useCallback(async () => {
     setLoading(true)
     setError(null)
-    const supabase = tryGetSupabase()
-
-    let query = supabase
-      .from('product_reviews')
-      .select('*, products(name)', { count: 'exact' })
-      .order('created_at', { ascending: false })
-      .range(pagination.start, pagination.start + pagination.pageSize - 1)
-
-    if (statusFilter) {
-      query = query.eq('status', statusFilter)
-    }
-
-    const { data, error: fetchError, count } = await query
-    if (fetchError) {
-      setError(fetchError.message)
+    try {
+      const result = await listAdminReviews({
+        limit: pagination.pageSize,
+        offset: pagination.start,
+        status: statusFilter || undefined,
+      })
+      setRows(result.items as ReviewRow[])
+      setTotal(result.total)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load reviews')
+    } finally {
       setLoading(false)
-      return
     }
-
-    const mapped = (data ?? []).map((row) => {
-      const product = row.products as { name?: string } | null
-      return {
-        ...row,
-        product_name: product?.name,
-        products: undefined,
-      } as ReviewRow
-    })
-
-    setRows(mapped)
-    setTotal(count ?? 0)
-    setLoading(false)
   }, [pagination.pageSize, pagination.start, statusFilter])
 
   useEffect(() => {
@@ -87,31 +70,29 @@ export function AdminReviews() {
 
   async function updateStatus(row: ReviewRow, status: 'approved' | 'rejected') {
     setBusyId(row.id)
-    const { error: updateError } = await tryGetSupabase()
-      .from('product_reviews')
-      .update({ status, updated_at: new Date().toISOString() })
-      .eq('id', row.id)
-    setBusyId(null)
-    if (updateError) {
-      setError(updateError.message)
-      return
+    try {
+      await adminUpdateReviewStatus(row.id, status)
+      toast.success(status === 'approved' ? 'Review approved' : 'Review rejected')
+      await refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update review')
+    } finally {
+      setBusyId(null)
     }
-    toast.success(status === 'approved' ? 'Review approved' : 'Review rejected')
-    await refresh()
   }
 
   async function remove(row: ReviewRow) {
     if (!window.confirm('Delete this review permanently?')) return
-    const { error: deleteError } = await tryGetSupabase().from('product_reviews').delete().eq('id', row.id)
-    if (deleteError) {
-      setError(deleteError.message)
-      return
+    try {
+      await adminDelete('product_reviews', row.id)
+      toast.success('Review deleted')
+      await refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete review')
     }
-    toast.success('Review deleted')
-    await refresh()
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>

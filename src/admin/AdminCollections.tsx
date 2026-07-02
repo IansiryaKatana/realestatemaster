@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminBulkDelete, adminDelete, listAdminCollections } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { useAdminCatalogSync } from '@/admin/hooks/useAdminCatalogSync'
 import { SLUG_REGEX, slugify } from '@/lib/utils'
@@ -10,6 +11,7 @@ import { AdminBulkToolbar } from '@/admin/components/AdminBulkToolbar'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { ImageUploadField } from '@/admin/components/ImageUploadField'
 import { RichTextEditor } from '@/admin/components/RichTextEditor'
@@ -60,11 +62,13 @@ export function AdminCollections() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const supabase = tryGetSupabase()
-    const { data, error: fetchError } = await supabase.from('collections').select('*').order('sort_order')
-    if (fetchError) setError(fetchError.message)
-    else setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminCollections())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load collections')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { void refresh() }, [refresh])
@@ -126,24 +130,31 @@ export function AdminCollections() {
 
   async function remove(row: Row) {
     if (!window.confirm(`Delete "${row.title}"?`)) return
-    const { error: deleteError } = await tryGetSupabase().from('collections').delete().eq('id', row.id)
-    if (deleteError) return setError(deleteError.message)
-    toast.success('Collection deleted')
-    await refresh()
-    await syncCatalog()
+    try {
+      await adminDelete('collections', row.id)
+      toast.success('Collection deleted')
+      await refresh()
+      await syncCatalog()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete collection')
+    }
   }
 
   async function bulkDelete() {
     if (bulk.selectedIds.length === 0) return
     if (!window.confirm(`Delete ${bulk.selectedIds.length} collection(s)?`)) return
     setBulkBusy(true)
-    const { error: deleteError } = await tryGetSupabase().from('collections').delete().in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    if (deleteError) return setError(deleteError.message)
-    toast.success(`${bulk.selectedIds.length} collection(s) deleted`)
-    bulk.clear()
-    await refresh()
-    await syncCatalog()
+    try {
+      await adminBulkDelete('collections', bulk.selectedIds)
+      toast.success(`${bulk.selectedIds.length} collection(s) deleted`)
+      bulk.clear()
+      await refresh()
+      await syncCatalog()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete collections')
+    } finally {
+      setBulkBusy(false)
+    }
   }
 
   async function bulkSetActive(is_active: boolean) {
@@ -161,7 +172,7 @@ export function AdminCollections() {
     await syncCatalog()
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>

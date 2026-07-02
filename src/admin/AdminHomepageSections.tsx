@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminBulkDelete, adminDelete, listAdminHomepageSections } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { useCms } from '@/contexts/CmsContext'
 import { SECTION_KEY_REGEX, sectionKeyify } from '@/lib/utils'
@@ -10,6 +11,7 @@ import { AdminBulkToolbar } from '@/admin/components/AdminBulkToolbar'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { ImageUploadField } from '@/admin/components/ImageUploadField'
 import { useAdminTablePagination } from '@/admin/useAdminTablePagination'
@@ -60,10 +62,13 @@ export function AdminHomepageSections() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const { data, error: fetchError } = await tryGetSupabase().from('homepage_sections').select('*').order('sort_order')
-    if (fetchError) setError(fetchError.message)
-    else setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminHomepageSections())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load homepage sections')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { void refresh() }, [refresh])
@@ -129,24 +134,31 @@ export function AdminHomepageSections() {
 
   async function remove(row: Row) {
     if (!window.confirm(`Delete section "${row.section_key}"?`)) return
-    const { error: deleteError } = await tryGetSupabase().from('homepage_sections').delete().eq('id', row.id)
-    if (deleteError) return setError(deleteError.message)
-    toast.success('Section deleted')
-    await refresh()
-    await refetchCms()
+    try {
+      await adminDelete('homepage_sections', row.id)
+      toast.success('Section deleted')
+      await refresh()
+      await refetchCms()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete section')
+    }
   }
 
   async function bulkDelete() {
     if (bulk.selectedIds.length === 0) return
     if (!window.confirm(`Delete ${bulk.selectedIds.length} section(s)?`)) return
     setBulkBusy(true)
-    const { error: deleteError } = await tryGetSupabase().from('homepage_sections').delete().in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    if (deleteError) return setError(deleteError.message)
-    toast.success(`${bulk.selectedIds.length} section(s) deleted`)
-    bulk.clear()
-    await refresh()
-    await refetchCms()
+    try {
+      await adminBulkDelete('homepage_sections', bulk.selectedIds)
+      toast.success(`${bulk.selectedIds.length} section(s) deleted`)
+      bulk.clear()
+      await refresh()
+      await refetchCms()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete sections')
+    } finally {
+      setBulkBusy(false)
+    }
   }
 
   async function bulkSetActive(is_active: boolean) {
@@ -164,7 +176,7 @@ export function AdminHomepageSections() {
     await refetchCms()
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>

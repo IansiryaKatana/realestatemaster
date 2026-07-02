@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
-import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminBulkDelete, adminDelete, listAdminNewsletter } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { AdminBulkToolbar } from '@/admin/components/AdminBulkToolbar'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { AdminClickableTableRow, AdminTableStopCell } from '@/admin/components/AdminClickableTableRow'
@@ -28,13 +29,13 @@ export function AdminNewsletter() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const { data, error: fetchError } = await tryGetSupabase()
-      .from('newsletter_subscribers')
-      .select('*')
-      .order('created_at', { ascending: false })
-    if (fetchError) setError(fetchError.message)
-    else setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminNewsletter())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load subscribers')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -43,31 +44,32 @@ export function AdminNewsletter() {
 
   async function remove(row: Row) {
     if (!window.confirm(`Remove subscriber ${row.email}?`)) return
-    const { error: deleteError } = await tryGetSupabase().from('newsletter_subscribers').delete().eq('id', row.id)
-    if (deleteError) {
-      setError(deleteError.message)
-      return
+    try {
+      await adminDelete('newsletter_subscribers', row.id)
+      toast.success('Subscriber removed')
+      await refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to remove subscriber')
     }
-    toast.success('Subscriber removed')
-    await refresh()
   }
 
   async function bulkDelete() {
     if (bulk.selectedIds.length === 0) return
     if (!window.confirm(`Remove ${bulk.selectedIds.length} subscriber(s)?`)) return
     setBulkBusy(true)
-    const { error: deleteError } = await tryGetSupabase().from('newsletter_subscribers').delete().in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    if (deleteError) {
-      setError(deleteError.message)
-      return
+    try {
+      await adminBulkDelete('newsletter_subscribers', bulk.selectedIds)
+      toast.success(`${bulk.selectedIds.length} subscriber(s) removed`)
+      bulk.clear()
+      await refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to remove subscribers')
+    } finally {
+      setBulkBusy(false)
     }
-    toast.success(`${bulk.selectedIds.length} subscriber(s) removed`)
-    bulk.clear()
-    await refresh()
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>

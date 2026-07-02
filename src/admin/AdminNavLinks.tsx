@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminBulkDelete, adminDelete, listAdminNavLinks } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { useCms } from '@/contexts/CmsContext'
 import { AdminSheet } from '@/admin/components/AdminSheet'
@@ -9,6 +10,7 @@ import { AdminBulkToolbar } from '@/admin/components/AdminBulkToolbar'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { useAdminTablePagination } from '@/admin/useAdminTablePagination'
 import { useBulkSelection } from '@/admin/hooks/useBulkSelection'
@@ -49,10 +51,13 @@ export function AdminNavLinks() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const { data, error: fetchError } = await tryGetSupabase().from('nav_links').select('*').order('sort_order')
-    if (fetchError) setError(fetchError.message)
-    else setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminNavLinks())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load nav links')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { void refresh() }, [refresh])
@@ -92,24 +97,31 @@ export function AdminNavLinks() {
 
   async function remove(row: Row) {
     if (!window.confirm(`Delete "${row.label}"?`)) return
-    const { error: deleteError } = await tryGetSupabase().from('nav_links').delete().eq('id', row.id)
-    if (deleteError) return setError(deleteError.message)
-    toast.success('Nav link deleted')
-    await refresh()
-    await refetchCms()
+    try {
+      await adminDelete('nav_links', row.id)
+      toast.success('Nav link deleted')
+      await refresh()
+      await refetchCms()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete nav link')
+    }
   }
 
   async function bulkDelete() {
     if (bulk.selectedIds.length === 0) return
     if (!window.confirm(`Delete ${bulk.selectedIds.length} nav link(s)?`)) return
     setBulkBusy(true)
-    const { error: deleteError } = await tryGetSupabase().from('nav_links').delete().in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    if (deleteError) return setError(deleteError.message)
-    toast.success(`${bulk.selectedIds.length} nav link(s) deleted`)
-    bulk.clear()
-    await refresh()
-    await refetchCms()
+    try {
+      await adminBulkDelete('nav_links', bulk.selectedIds)
+      toast.success(`${bulk.selectedIds.length} nav link(s) deleted`)
+      bulk.clear()
+      await refresh()
+      await refetchCms()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete nav links')
+    } finally {
+      setBulkBusy(false)
+    }
   }
 
   async function bulkSetActive(is_active: boolean) {
@@ -127,7 +139,7 @@ export function AdminNavLinks() {
     await refetchCms()
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>

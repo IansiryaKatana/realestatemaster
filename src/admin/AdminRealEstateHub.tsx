@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminBulkDelete, adminDelete, fetchAdminAgencySettings, listAdminAgents, listAdminPropertyInquiries } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { AdminTabHub } from '@/admin/components/AdminTabHub'
 import { AdminLoadingState, AdminErrorBanner } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminSheet } from '@/admin/components/AdminSheet'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { ImageUploadField } from '@/admin/components/ImageUploadField'
@@ -73,21 +75,20 @@ function AdminAgencySettings() {
 
   const load = useCallback(async () => {
     setLoading(true)
-    const supabase = tryGetSupabase()
-    const [agencyResult, faviconResult] = await Promise.all([
-      supabase.from('agency_settings').select('*').limit(1).maybeSingle(),
-      supabase.from('site_settings').select('value').eq('key', 'favicon_url').maybeSingle(),
-    ])
-    if (agencyResult.error) toast.error(agencyResult.error.message)
-    if (faviconResult.error) toast.error(faviconResult.error.message)
-    setRow(agencyResult.data)
-    setFaviconUrl(faviconResult.data?.value ?? '')
-    setLoading(false)
+    try {
+      const { agency, faviconUrl } = await fetchAdminAgencySettings()
+      setRow(agency)
+      setFaviconUrl(faviconUrl)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to load agency settings')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { void load() }, [load])
 
-  if (loading) return <AdminLoadingState />
+  if (loading && !row) return <AdminLoadingState />
 
   const form = row ?? {
     id: '',
@@ -289,10 +290,13 @@ function AdminAgents() {
 
   const load = useCallback(async () => {
     setLoading(true)
-    const { data, error } = await tryGetSupabase().from('agents').select('*').order('name')
-    if (error) toast.error(error.message)
-    setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminAgents())
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to load agents')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { void load() }, [load])
@@ -355,16 +359,17 @@ function AdminAgents() {
 
   async function removeAgent(row: AgentRow) {
     if (!window.confirm(`Delete agent "${row.name}"?`)) return
-    const { error } = await tryGetSupabase().from('agents').delete().eq('id', row.id)
-    if (error) toast.error(error.message)
-    else {
+    try {
+      await adminDelete('agents', row.id)
       toast.success('Agent deleted')
       if (detail?.id === row.id) setDetail(null)
       void load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete agent')
     }
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div className="space-y-4">
@@ -522,20 +527,23 @@ function AdminPropertyInquiries() {
   const [rows, setRows] = useState<Database['public']['Tables']['property_inquiries']['Row'][]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    void (async () => {
-      const { data, error } = await tryGetSupabase()
-        .from('property_inquiries')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(100)
-      if (error) toast.error(error.message)
-      setRows(data ?? [])
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const data = await listAdminPropertyInquiries()
+      setRows(data.slice(0, 100))
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to load inquiries')
+    } finally {
       setLoading(false)
-    })()
+    }
   }, [])
 
-  if (loading) return <AdminLoadingState />
+  useEffect(() => {
+    void load()
+  }, [load])
+
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div className="space-y-3">

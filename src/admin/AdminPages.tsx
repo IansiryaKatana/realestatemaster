@@ -2,12 +2,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminDelete, listAdminPages } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { useCms } from '@/contexts/CmsContext'
 import { SLUG_REGEX, slugify } from '@/lib/utils'
 import { AdminSheet } from '@/admin/components/AdminSheet'
 import { AdminBulkToolbar } from '@/admin/components/AdminBulkToolbar'
 import { AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
@@ -57,11 +59,13 @@ export function AdminPages() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const sb = tryGetSupabase()
-    if (!sb) return
-    const { data } = await sb.from('marketing_pages').select('*').order('sort_order')
-    setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminPages())
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to load pages')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -131,17 +135,21 @@ export function AdminPages() {
   }
 
   async function bulkDelete() {
-    const sb = tryGetSupabase()
-    if (!sb || bulk.selectedIds.length === 0) return
+    if (bulk.selectedIds.length === 0) return
     setBulkBusy(true)
-    await sb.from('marketing_pages').delete().in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    bulk.clear()
-    await refresh()
-    await refetchCms()
+    try {
+      await Promise.all(bulk.selectedIds.map((id) => adminDelete('pages', id)))
+      bulk.clear()
+      await refresh()
+      await refetchCms()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete pages')
+    } finally {
+      setBulkBusy(false)
+    }
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div className="space-y-4">

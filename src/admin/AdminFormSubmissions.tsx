@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { adminBulkDelete, adminDelete, listAdminFormSubmissions } from '@/admin/lib/adminRpc'
 import type { Database } from '@/integrations/supabase/database.types'
 import { AdminBulkToolbar } from '@/admin/components/AdminBulkToolbar'
 import { AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { useAdminTablePagination } from '@/admin/useAdminTablePagination'
@@ -49,11 +51,13 @@ export function AdminFormSubmissions() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const sb = tryGetSupabase()
-    if (!sb) return
-    const { data } = await sb.from('form_submissions').select('*').order('created_at', { ascending: false })
-    setRows(data ?? [])
-    setLoading(false)
+    try {
+      setRows(await listAdminFormSubmissions())
+    } catch {
+      setRows([])
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -86,13 +90,17 @@ export function AdminFormSubmissions() {
   }
 
   async function bulkDelete() {
-    const sb = tryGetSupabase()
-    if (!sb) return
+    if (bulk.selectedIds.length === 0) return
     setBulkBusy(true)
-    await sb.from('form_submissions').delete().in('id', bulk.selectedIds)
-    setBulkBusy(false)
-    bulk.clear()
-    await refresh()
+    try {
+      await adminBulkDelete('form_submissions', bulk.selectedIds)
+      bulk.clear()
+      await refresh()
+    } catch {
+      // keep existing silent failure behavior
+    } finally {
+      setBulkBusy(false)
+    }
   }
 
   const detailPayload = detail ? parseSubmissionPayload(detail.payload) : {}
@@ -104,7 +112,7 @@ export function AdminFormSubmissions() {
       ))
     : []
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div className="space-y-4">
@@ -157,10 +165,11 @@ export function AdminFormSubmissions() {
                           actions={crudRowActions({
                             onView: () => void openDetail(row),
                             onDelete: async () => {
-                              const sb = tryGetSupabase()
-                              if (sb) {
-                                await sb.from('form_submissions').delete().eq('id', row.id)
+                              try {
+                                await adminDelete('form_submissions', row.id)
                                 await refresh()
+                              } catch {
+                                // keep existing silent failure behavior
                               }
                             },
                           })}

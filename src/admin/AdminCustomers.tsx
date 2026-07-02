@@ -6,6 +6,8 @@ import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPag
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { AdminTablePagination } from '@/admin/components/AdminTablePagination'
 import { useAdminTablePagination } from '@/admin/useAdminTablePagination'
+import { useAdminAppliedSearch } from '@/admin/hooks/useAdminAppliedSearch'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { adminBtnSecondary, adminInput } from '@/admin/adminClassNames'
 
 type CustomerRow = {
@@ -22,7 +24,7 @@ export function AdminCustomers() {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [search, setSearch] = useState('')
+  const { search, setSearch, appliedSearch, applySearch } = useAdminAppliedSearch()
   const pagination = useAdminTablePagination(total)
 
   const refresh = useCallback(async () => {
@@ -31,7 +33,7 @@ export function AdminCustomers() {
     const { data, error: rpcError } = await tryGetSupabase().rpc('rpc_list_admin_customers', {
       p_limit: pagination.pageSize,
       p_offset: pagination.start,
-      p_search: search.trim() || null,
+      p_search: appliedSearch || null,
     })
     if (rpcError) setError(rpcError.message)
     else if (data && (data as { ok: boolean }).ok) {
@@ -42,19 +44,35 @@ export function AdminCustomers() {
       setError((data as { error?: string })?.error ?? 'Failed to load clients')
     }
     setLoading(false)
-  }, [pagination.pageSize, pagination.start, search])
+  }, [pagination.pageSize, pagination.start, appliedSearch])
 
   useEffect(() => { void refresh() }, [refresh])
 
-  if (loading && rows.length === 0) return <AdminLoadingState />
+  function submitSearch() {
+    applySearch()
+    pagination.setPage(1)
+  }
+
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div>
       <AdminTabToolbar actions={
         <button type="button" className={adminBtnSecondary} onClick={() => void refresh()}><RefreshCw className="h-4 w-4" />Refresh</button>
       } />
-      <div className="mb-4 max-w-md">
-        <input className={adminInput} value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by client email…" />
+      <div className="admin-search-row mb-4 max-w-md">
+        <input
+          className={adminInput}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') submitSearch()
+          }}
+          placeholder="Search by client email…"
+        />
+        <button type="button" className={adminBtnSecondary} onClick={submitSearch}>
+          Search
+        </button>
       </div>
       <AdminErrorBanner message={error} />
       <div className="admin-table-frame">

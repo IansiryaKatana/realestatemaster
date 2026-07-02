@@ -5,6 +5,7 @@ import { tryGetSupabase } from '@/integrations/supabase/client'
 import type { Database } from '@/integrations/supabase/database.types'
 import { useCms } from '@/contexts/CmsContext'
 import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import {
   getSettingValue,
   patchSetting,
@@ -167,7 +168,7 @@ export function AdminEmailTemplates() {
     toast.success(`Test email sent to ${testEmail.trim()}`)
   }
 
-  if (loading) return <AdminLoadingState />
+  if (adminShowInitialLoading(loading, rows.length)) return <AdminLoadingState />
 
   return (
     <div className="space-y-6">
