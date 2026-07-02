@@ -8,6 +8,7 @@ import { nitro } from 'nitro/vite'
 import netlify from '@netlify/vite-plugin-tanstack-start'
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url))
+const cssTreeBundled = path.resolve(rootDir, 'node_modules/css-tree/dist/csstree.esm.js')
 
 /**
  * DEPLOY_TARGET controls the production adapter:
@@ -32,6 +33,8 @@ export default defineConfig(({ command }) => ({
   resolve: {
     alias: {
       '@': path.resolve(rootDir, 'src'),
+      // jsdom → css-tree uses dynamic JSON requires that break in Vercel serverless bundles.
+      ...(isVercel ? { 'css-tree': cssTreeBundled } : {}),
     },
     tsconfigPaths: true,
   },
@@ -43,7 +46,14 @@ export default defineConfig(({ command }) => ({
       ? [netlify()]
       : isVercel
         ? command === 'build'
-          ? [nitro({ preset: 'vercel' })]
+          ? [
+              nitro({
+                preset: 'vercel',
+                alias: {
+                  'css-tree': 'css-tree/dist/csstree.esm.js',
+                },
+              }),
+            ]
           : []
         : command === 'build'
           ? [nitro({ preset: 'node-server' })]
