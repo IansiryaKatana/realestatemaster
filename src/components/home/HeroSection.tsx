@@ -65,7 +65,7 @@ export function HeroSection() {
               </span>
             ))}
           </h1>
-          <Button asChild variant="cream" size="sm" className="hero-cta mt-8 h-10 px-6 text-xs font-bold">
+          <Button asChild variant="cream" size="sm" className="hero-cta mt-8 h-10 rounded-sm px-6 text-xs font-bold">
             <CmsLink href={slide.ctaUrl}>{slide.ctaLabel}</CmsLink>
           </Button>
         </div>

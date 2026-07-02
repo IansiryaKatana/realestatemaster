@@ -43,12 +43,12 @@ export function ProductCard({ product }: { product: Product }) {
         {isProperty && (product.listingType || meta?.propertyTypeName) ? (
           <div className="absolute left-2.5 top-2.5 z-[3] flex flex-wrap gap-1">
             {product.listingType ? (
-              <Badge className="bg-white/95 text-text-brown">
+              <Badge className="rounded-sm bg-white/95 text-text-brown">
                 {product.listingType === 'rent' ? 'For Rent' : 'For Sale'}
               </Badge>
             ) : null}
             {meta?.propertyTypeName ? (
-              <Badge className="bg-white/95 text-text-brown">
+              <Badge className="rounded-sm bg-white/95 text-text-brown">
                 {meta.propertyTypeName}
               </Badge>
             ) : null}
@@ -57,12 +57,12 @@ export function ProductCard({ product }: { product: Product }) {
         {isProperty && meta ? (
           <div className="absolute bottom-2.5 left-2.5 z-[3] flex flex-wrap gap-1">
             {meta.furnishingName ? (
-              <Badge variant="secondary" className="bg-black/60 text-[10px] uppercase text-white hover:bg-black/60">
+              <Badge variant="secondary" className="rounded-sm bg-black/60 text-[10px] uppercase text-white hover:bg-black/60">
                 {meta.furnishingName}
               </Badge>
             ) : null}
             {meta.areaName ? (
-              <Badge variant="secondary" className="bg-black/60 text-[10px] uppercase text-white hover:bg-black/60">
+              <Badge variant="secondary" className="rounded-sm bg-black/60 text-[10px] uppercase text-white hover:bg-black/60">
                 {meta.areaName}
               </Badge>
             ) : null}

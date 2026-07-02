@@ -35,12 +35,7 @@ function FeatureCardArticle({ card, index }: { card: FeatureCard; index: number 
           index === 2 ? 'items-start text-left' : '',
         )}
       >
-        <h3
-          className={cn(
-            'mb-4 max-w-[90%] font-display font-extrabold leading-tight',
-            index === 2 ? 'text-3xl' : 'text-sm',
-          )}
-        >
+        <h3 className="mb-4 max-w-[90%] font-display text-3xl font-extrabold leading-tight">
           {card.title}
         </h3>
         <Button

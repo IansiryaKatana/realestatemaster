@@ -50,7 +50,7 @@ export function FinalCTA() {
           <h2 className="font-display text-3xl font-extrabold leading-tight text-white md:text-4xl">
             {section.title}
           </h2>
-          <Button asChild variant="cream" className="mt-6 h-10 px-6 text-xs font-bold">
+          <Button asChild variant="cream" className="mt-6 h-10 rounded-sm px-6 text-xs font-bold">
             <CmsLink href={section.ctaUrl}>{section.ctaLabel}</CmsLink>
           </Button>
         </div>
