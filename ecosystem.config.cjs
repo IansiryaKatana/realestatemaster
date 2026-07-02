@@ -3,7 +3,7 @@ module.exports = {
   apps: [
     {
       name: 'astor-electronics',
-      script: '.output/server/index.mjs',
+      script: '.nitro-output/server/index.mjs',
       cwd: __dirname,
       instances: 1,
       exec_mode: 'fork',

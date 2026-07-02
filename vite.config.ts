@@ -9,6 +9,10 @@ import netlify from '@netlify/vite-plugin-tanstack-start'
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url))
 const cssTreeBundled = path.resolve(rootDir, 'node_modules/css-tree/dist/csstree.esm.js')
+const nodeOutputDir = path.resolve(rootDir, '.nitro-output')
+const cssTreeAlias = {
+  'css-tree': 'css-tree/dist/csstree.esm.js',
+} as const
 
 /**
  * DEPLOY_TARGET controls the production adapter:
@@ -33,8 +37,8 @@ export default defineConfig(({ command }) => ({
   resolve: {
     alias: {
       '@': path.resolve(rootDir, 'src'),
-      // jsdom → css-tree uses dynamic JSON requires that break in Vercel serverless bundles.
-      ...(isVercel ? { 'css-tree': cssTreeBundled } : {}),
+      // jsdom → css-tree uses dynamic JSON requires and is heavy to bundle in Nitro.
+      ...(command === 'build' && !isNetlify ? { 'css-tree': cssTreeBundled } : {}),
     },
     tsconfigPaths: true,
   },
@@ -49,14 +53,20 @@ export default defineConfig(({ command }) => ({
           ? [
               nitro({
                 preset: 'vercel',
-                alias: {
-                  'css-tree': 'css-tree/dist/csstree.esm.js',
-                },
+                alias: cssTreeAlias,
               }),
             ]
           : []
         : command === 'build'
-          ? [nitro({ preset: 'node-server' })]
+          ? [
+              nitro({
+                preset: 'node-server',
+                output: { dir: nodeOutputDir },
+                alias: cssTreeAlias,
+                // @vercel/nft tracing fails on Windows non-C: drives (EISDIR on tslib).
+                noExternals: process.platform === 'win32',
+              }),
+            ]
           : []),
   ],
 }))

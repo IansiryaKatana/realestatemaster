@@ -4,7 +4,7 @@ Astor Electronics is a **TanStack Start** app with SSR. Use one of two build tar
 
 | Target | Command | Output | Host |
 |--------|---------|--------|------|
-| **Hostinger / Node** | `npm run build:hostinger` | `.output/server/index.mjs` | Hostinger Node.js, VPS, Railway, etc. |
+| **Hostinger / Node** | `npm run build:hostinger` | `.nitro-output/server/index.mjs` | Hostinger Node.js, VPS, Railway, etc. |
 | **Netlify** | `npm run build:netlify` | `dist/client` + serverless | Netlify |
 | **Vercel** | `npm run build:vercel` | Nitro Vercel output | Vercel |
 
@@ -138,7 +138,7 @@ The app listens on `PORT` (default `3000`). Point your domain to this port in Ho
 | Node version | 20.x |
 | Application mode | Production |
 | Application root | project folder |
-| Application startup file | `.output/server/index.mjs` |
+| Application startup file | `.nitro-output/server/index.mjs` |
 | Build command | `npm run build:hostinger` |
 
 Set `VITE_*` env vars in the panel before building so they are embedded in the client bundle.
@@ -151,7 +151,7 @@ If Apache serves the domain and Node runs on port 3000, see `hostinger/apache-pr
 
 ## Switching hosts
 
-1. **Netlify → Hostinger**: run `npm run build:hostinger`, deploy `.output/` + `public/` assets, start Node server.
+1. **Netlify → Hostinger**: run `npm run build:hostinger`, deploy `.nitro-output/` + `public/` assets, start Node server.
 2. **Hostinger → Netlify**: connect repo, set env vars, deploy (uses `build:netlify` from `netlify.toml`).
 3. **Any host → Vercel**: connect repo, set env vars, deploy (uses `build:vercel` from `vercel.json`).
 
