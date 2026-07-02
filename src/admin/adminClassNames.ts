@@ -35,9 +35,15 @@ export const adminNavLinkActive = cn(
   'bg-[var(--admin-sidebar-active)] text-white hover:bg-[var(--admin-sidebar-active)] hover:text-white',
 )
 
-export const adminSidebarSignOut = cn(
-  'flex items-center gap-3 rounded-[var(--admin-radius)] px-3 py-2.5 text-sm font-medium transition-colors w-full',
+export const adminBtnClose = cn(
+  'inline-flex items-center justify-center gap-2 rounded-[var(--admin-radius)] px-4 py-2 text-sm font-medium transition-colors',
   'bg-[var(--admin-danger)] text-white hover:bg-[#9a1f15]',
+  'disabled:pointer-events-none disabled:opacity-50',
+)
+
+export const adminSidebarSignOut = cn(
+  adminBtnClose,
+  'w-full justify-start gap-3 px-3 py-2.5',
 )
 
 export const adminInput = cn(

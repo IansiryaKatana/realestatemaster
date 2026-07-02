@@ -2,7 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { adminBtnPrimary, adminBtnSecondary, adminSheetPanel } from '@/admin/adminClassNames'
+import { adminBtnClose, adminBtnPrimary, adminSheetPanel } from '@/admin/adminClassNames'
 
 export type AdminSheetProps = {
   open: boolean
@@ -65,7 +65,7 @@ export function AdminSheet({
 
           <div className="flex flex-col-reverse gap-2 border-t border-[var(--admin-border)] p-4 sm:flex-row sm:justify-end">
             <Dialog.Close asChild>
-              <button type="button" className={adminBtnSecondary}>
+              <button type="button" className={adminBtnClose}>
                 Cancel
               </button>
             </Dialog.Close>

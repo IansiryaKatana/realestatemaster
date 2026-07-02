@@ -15,6 +15,7 @@ import { useCms } from '@/contexts/CmsContext'
 import { fetchPropertyLookups } from '@/lib/property/propertyLookups'
 import { AdminPropertyTransactions } from '@/admin/AdminPropertyTransactions'
 import { AdminInvoices } from '@/admin/AdminInvoices'
+import { PhoneInputField } from '@/components/ui/phone-input-field'
 
 const TABS = [
   { id: 'agency', label: 'Agency' },
@@ -170,13 +171,23 @@ function AdminAgencySettings() {
       <div className="admin-section space-y-4">
         <h2 className="font-semibold">Company details</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {(['agency_name', 'trade_license_number', 'rera_number', 'company_email', 'company_phone', 'company_whatsapp'] as const).map((key) => (
+          {(['agency_name', 'trade_license_number', 'rera_number', 'company_email'] as const).map((key) => (
             <div key={key}>
               <label className={adminLabel}>{AGENCY_FIELD_LABELS[key]}</label>
               <input
                 className={adminInput}
                 value={form[key] ?? ''}
                 onChange={(e) => updateField(key, e.target.value)}
+              />
+            </div>
+          ))}
+          {(['company_phone', 'company_whatsapp'] as const).map((key) => (
+            <div key={key}>
+              <label className={adminLabel}>{AGENCY_FIELD_LABELS[key]}</label>
+              <PhoneInputField
+                value={form[key] ?? undefined}
+                onChange={(value) => updateField(key, value ?? '')}
+                variant="admin"
               />
             </div>
           ))}
@@ -426,20 +437,32 @@ function AdminAgents() {
               folder="agents"
             />
           </div>
-          {(['name', 'email', 'phone', 'whatsapp', 'license_number', 'auth_user_id'] as const).map((key) => (
+          {(['name', 'email', 'license_number', 'auth_user_id'] as const).map((key) => (
             <div key={key}>
               <label className={adminLabel}>
                 {key === 'auth_user_id'
                   ? 'Auth user ID (Supabase UUID)'
-                  : key === 'phone'
-                    ? 'Phone (Call button)'
-                    : key === 'whatsapp'
-                      ? 'WhatsApp number (alerts & chat link)'
-                      : key.replace(/_/g, ' ')}
+                  : key.replace(/_/g, ' ')}
               </label>
               <input className={adminInput} value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} />
             </div>
           ))}
+          <div>
+            <label className={adminLabel}>Phone (Call button)</label>
+            <PhoneInputField
+              value={form.phone || undefined}
+              onChange={(value) => setForm((f) => ({ ...f, phone: value ?? '' }))}
+              variant="admin"
+            />
+          </div>
+          <div>
+            <label className={adminLabel}>WhatsApp number (alerts & chat link)</label>
+            <PhoneInputField
+              value={form.whatsapp || undefined}
+              onChange={(value) => setForm((f) => ({ ...f, whatsapp: value ?? '' }))}
+              variant="admin"
+            />
+          </div>
           <div>
             <label className={adminLabel}>Commission type</label>
             <select className={adminInput} value={form.default_commission_type} onChange={(e) => setForm((f) => ({ ...f, default_commission_type: e.target.value }))}>

@@ -20,6 +20,8 @@ import { CookieConsentBanner } from '@/components/legal/CookieConsentBanner'
 import { CookieConsentProvider } from '@/contexts/CookieConsentContext'
 import { StorefrontAuthProvider } from '@/contexts/StorefrontAuthContext'
 import { AgentAuthProvider } from '@/contexts/AgentAuthContext'
+import { TenantAuthProvider } from '@/contexts/TenantAuthContext'
+import { LandlordAuthProvider } from '@/contexts/LandlordAuthContext'
 import { GoogleTagManager } from '@/components/analytics/GoogleTagManager'
 import { SiteFavicon } from '@/lib/siteBrand'
 import { BrandThemeEffect } from '@/components/branding/BrandThemeEffect'
@@ -61,6 +63,8 @@ function RootDocument({ children }: { children: ReactNode }) {
           <AdminAuthProvider>
             <StorefrontAuthProvider>
               <AgentAuthProvider>
+              <TenantAuthProvider>
+              <LandlordAuthProvider>
               <CookieConsentProvider>
                 <CmsProvider skipFetch={isAdmin}>
                   <BrandThemeEffect />
@@ -74,6 +78,8 @@ function RootDocument({ children }: { children: ReactNode }) {
                   <AppToaster />
                 </CmsProvider>
               </CookieConsentProvider>
+              </LandlordAuthProvider>
+              </TenantAuthProvider>
               </AgentAuthProvider>
             </StorefrontAuthProvider>
           </AdminAuthProvider>

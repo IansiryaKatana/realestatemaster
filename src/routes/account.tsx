@@ -7,6 +7,9 @@ import { Loader2, Building2, Bell, Calendar, FileText, Heart } from 'lucide-reac
 import { z } from 'zod'
 import { useStorefrontAuth } from '@/contexts/StorefrontAuthContext'
 import { useAgentAuth } from '@/contexts/AgentAuthContext'
+import { useTenantAuth } from '@/contexts/TenantAuthContext'
+import { useLandlordAuth } from '@/contexts/LandlordAuthContext'
+import { PortalRoleSwitcher } from '@/portals/components/PortalRoleSwitcher'
 import { useCustomerOrders } from '@/lib/storefront/storefrontQueries'
 import { useClientTransactions } from '@/lib/property/propertyTransactionQueries'
 import { useWishlistProducts } from '@/lib/hooks/useWishlist'
@@ -50,6 +53,8 @@ function AccountHubCard({ to, title, description, icon: Icon }: { to: string; ti
 function AccountPage() {
   const { user, loading, signIn, signUp, resetPassword, signOut } = useStorefrontAuth()
   const { isAgent } = useAgentAuth()
+  const { isTenant } = useTenantAuth()
+  const { isLandlord } = useLandlordAuth()
   const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>('signin')
   const { data: orders = [], isLoading: ordersLoading } = useCustomerOrders(Boolean(user))
   const { data: transactions = [], isLoading: transactionsLoading } = useClientTransactions(Boolean(user))
@@ -110,9 +115,25 @@ function AccountPage() {
         <PageHero title={accountTitle} subtitle={user.email ?? ''} backLabel="Back to Home" />
 
         <SectionContainer className="py-10">
+          {isTenant ? (
+            <div className="mb-8 rounded-xl border border-cta-brown/30 bg-[#f7f4ef] p-5">
+              <p className="font-semibold text-text-brown">You are now a tenant</p>
+              <p className="mt-1 text-sm text-muted">Manage rent, complaints, and move-in tasks in the Tenant Portal.</p>
+              <Button asChild className="mt-4">
+                <Link to="/tenant">Go to Tenant Portal</Link>
+              </Button>
+            </div>
+          ) : null}
+
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
             <h2 className="font-display text-2xl font-extrabold">Client dashboard</h2>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <PortalRoleSwitcher />
+              {isLandlord ? (
+                <Button asChild variant="outline">
+                  <Link to="/owner">Owner portal</Link>
+                </Button>
+              ) : null}
               {isAgent ? (
                 <Button asChild variant="outline">
                   <Link to="/agent">Agent portal</Link>

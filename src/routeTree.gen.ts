@@ -13,21 +13,37 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as TenantRouteRouteImport } from './routes/tenant/route'
+import { Route as OwnerRouteRouteImport } from './routes/owner/route'
 import { Route as AgentRouteRouteImport } from './routes/agent/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TenantIndexRouteImport } from './routes/tenant/index'
+import { Route as OwnerIndexRouteImport } from './routes/owner/index'
 import { Route as BundlesIndexRouteImport } from './routes/bundles/index'
 import { Route as AgentIndexRouteImport } from './routes/agent/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as TenantRentRouteImport } from './routes/tenant/rent'
+import { Route as TenantNotificationsRouteImport } from './routes/tenant/notifications'
+import { Route as TenantMoveInRouteImport } from './routes/tenant/move-in'
+import { Route as TenantMaintenanceRouteImport } from './routes/tenant/maintenance'
+import { Route as TenantDocumentsRouteImport } from './routes/tenant/documents'
+import { Route as TenantComplaintsRouteImport } from './routes/tenant/complaints'
 import { Route as PropertySlugRouteImport } from './routes/property/$slug'
 import { Route as ProductSlugRouteImport } from './routes/product/$slug'
 import { Route as PagesSlugRouteImport } from './routes/pages/$slug'
+import { Route as OwnerStatementsRouteImport } from './routes/owner/statements'
+import { Route as OwnerPortfolioRouteImport } from './routes/owner/portfolio'
+import { Route as OwnerMaintenanceRouteImport } from './routes/owner/maintenance'
 import { Route as CollectionSlugRouteImport } from './routes/collection/$slug'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout/success'
 import { Route as BundleSlugRouteImport } from './routes/bundle/$slug'
 import { Route as AgentViewingsRouteImport } from './routes/agent/viewings'
+import { Route as AgentTenantsRouteImport } from './routes/agent/tenants'
+import { Route as AgentMaintenanceRouteImport } from './routes/agent/maintenance'
 import { Route as AgentInquiriesRouteImport } from './routes/agent/inquiries'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminTenancyRouteImport } from './routes/admin/tenancy'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin/submissions'
 import { Route as AdminSiteSettingsRouteImport } from './routes/admin/site-settings'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
@@ -83,6 +99,16 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TenantRouteRoute = TenantRouteRouteImport.update({
+  id: '/tenant',
+  path: '/tenant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OwnerRouteRoute = OwnerRouteRouteImport.update({
+  id: '/owner',
+  path: '/owner',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentRouteRoute = AgentRouteRouteImport.update({
   id: '/agent',
   path: '/agent',
@@ -97,6 +123,16 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const TenantIndexRoute = TenantIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const OwnerIndexRoute = OwnerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OwnerRouteRoute,
 } as any)
 const BundlesIndexRoute = BundlesIndexRouteImport.update({
   id: '/bundles/',
@@ -113,6 +149,36 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const TenantRentRoute = TenantRentRouteImport.update({
+  id: '/rent',
+  path: '/rent',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantNotificationsRoute = TenantNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantMoveInRoute = TenantMoveInRouteImport.update({
+  id: '/move-in',
+  path: '/move-in',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantMaintenanceRoute = TenantMaintenanceRouteImport.update({
+  id: '/maintenance',
+  path: '/maintenance',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantDocumentsRoute = TenantDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantComplaintsRoute = TenantComplaintsRouteImport.update({
+  id: '/complaints',
+  path: '/complaints',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
 const PropertySlugRoute = PropertySlugRouteImport.update({
   id: '/property/$slug',
   path: '/property/$slug',
@@ -127,6 +193,21 @@ const PagesSlugRoute = PagesSlugRouteImport.update({
   id: '/pages/$slug',
   path: '/pages/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const OwnerStatementsRoute = OwnerStatementsRouteImport.update({
+  id: '/statements',
+  path: '/statements',
+  getParentRoute: () => OwnerRouteRoute,
+} as any)
+const OwnerPortfolioRoute = OwnerPortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => OwnerRouteRoute,
+} as any)
+const OwnerMaintenanceRoute = OwnerMaintenanceRouteImport.update({
+  id: '/maintenance',
+  path: '/maintenance',
+  getParentRoute: () => OwnerRouteRoute,
 } as any)
 const CollectionSlugRoute = CollectionSlugRouteImport.update({
   id: '/collection/$slug',
@@ -148,6 +229,16 @@ const AgentViewingsRoute = AgentViewingsRouteImport.update({
   path: '/viewings',
   getParentRoute: () => AgentRouteRoute,
 } as any)
+const AgentTenantsRoute = AgentTenantsRouteImport.update({
+  id: '/tenants',
+  path: '/tenants',
+  getParentRoute: () => AgentRouteRoute,
+} as any)
+const AgentMaintenanceRoute = AgentMaintenanceRouteImport.update({
+  id: '/maintenance',
+  path: '/maintenance',
+  getParentRoute: () => AgentRouteRoute,
+} as any)
 const AgentInquiriesRoute = AgentInquiriesRouteImport.update({
   id: '/inquiries',
   path: '/inquiries',
@@ -156,6 +247,11 @@ const AgentInquiriesRoute = AgentInquiriesRouteImport.update({
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminTenancyRoute = AdminTenancyRouteImport.update({
+  id: '/tenancy',
+  path: '/tenancy',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
@@ -336,6 +432,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/agent': typeof AgentRouteRouteWithChildren
+  '/owner': typeof OwnerRouteRouteWithChildren
+  '/tenant': typeof TenantRouteRouteWithChildren
   '/account': typeof AccountRouteWithChildren
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRouteWithChildren
@@ -368,18 +466,32 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/site-settings': typeof AdminSiteSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/tenancy': typeof AdminTenancyRoute
   '/admin/users': typeof AdminUsersRoute
   '/agent/inquiries': typeof AgentInquiriesRoute
+  '/agent/maintenance': typeof AgentMaintenanceRoute
+  '/agent/tenants': typeof AgentTenantsRoute
   '/agent/viewings': typeof AgentViewingsRoute
   '/bundle/$slug': typeof BundleSlugRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/collection/$slug': typeof CollectionSlugRoute
+  '/owner/maintenance': typeof OwnerMaintenanceRoute
+  '/owner/portfolio': typeof OwnerPortfolioRoute
+  '/owner/statements': typeof OwnerStatementsRoute
   '/pages/$slug': typeof PagesSlugRoute
   '/product/$slug': typeof ProductSlugRoute
   '/property/$slug': typeof PropertySlugRoute
+  '/tenant/complaints': typeof TenantComplaintsRoute
+  '/tenant/documents': typeof TenantDocumentsRoute
+  '/tenant/maintenance': typeof TenantMaintenanceRoute
+  '/tenant/move-in': typeof TenantMoveInRoute
+  '/tenant/notifications': typeof TenantNotificationsRoute
+  '/tenant/rent': typeof TenantRentRoute
   '/admin/': typeof AdminIndexRoute
   '/agent/': typeof AgentIndexRoute
   '/bundles/': typeof BundlesIndexRoute
+  '/owner/': typeof OwnerIndexRoute
+  '/tenant/': typeof TenantIndexRoute
   '/account/orders/$orderId': typeof AccountOrdersOrderIdRoute
   '/account/transactions/$transactionId': typeof AccountTransactionsTransactionIdRoute
   '/agent/transactions/$transactionId': typeof AgentTransactionsTransactionIdRoute
@@ -421,18 +533,32 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/site-settings': typeof AdminSiteSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/tenancy': typeof AdminTenancyRoute
   '/admin/users': typeof AdminUsersRoute
   '/agent/inquiries': typeof AgentInquiriesRoute
+  '/agent/maintenance': typeof AgentMaintenanceRoute
+  '/agent/tenants': typeof AgentTenantsRoute
   '/agent/viewings': typeof AgentViewingsRoute
   '/bundle/$slug': typeof BundleSlugRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/collection/$slug': typeof CollectionSlugRoute
+  '/owner/maintenance': typeof OwnerMaintenanceRoute
+  '/owner/portfolio': typeof OwnerPortfolioRoute
+  '/owner/statements': typeof OwnerStatementsRoute
   '/pages/$slug': typeof PagesSlugRoute
   '/product/$slug': typeof ProductSlugRoute
   '/property/$slug': typeof PropertySlugRoute
+  '/tenant/complaints': typeof TenantComplaintsRoute
+  '/tenant/documents': typeof TenantDocumentsRoute
+  '/tenant/maintenance': typeof TenantMaintenanceRoute
+  '/tenant/move-in': typeof TenantMoveInRoute
+  '/tenant/notifications': typeof TenantNotificationsRoute
+  '/tenant/rent': typeof TenantRentRoute
   '/admin': typeof AdminIndexRoute
   '/agent': typeof AgentIndexRoute
   '/bundles': typeof BundlesIndexRoute
+  '/owner': typeof OwnerIndexRoute
+  '/tenant': typeof TenantIndexRoute
   '/account/orders/$orderId': typeof AccountOrdersOrderIdRoute
   '/account/transactions/$transactionId': typeof AccountTransactionsTransactionIdRoute
   '/agent/transactions/$transactionId': typeof AgentTransactionsTransactionIdRoute
@@ -445,6 +571,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/agent': typeof AgentRouteRouteWithChildren
+  '/owner': typeof OwnerRouteRouteWithChildren
+  '/tenant': typeof TenantRouteRouteWithChildren
   '/account': typeof AccountRouteWithChildren
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRouteWithChildren
@@ -477,18 +605,32 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/site-settings': typeof AdminSiteSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/tenancy': typeof AdminTenancyRoute
   '/admin/users': typeof AdminUsersRoute
   '/agent/inquiries': typeof AgentInquiriesRoute
+  '/agent/maintenance': typeof AgentMaintenanceRoute
+  '/agent/tenants': typeof AgentTenantsRoute
   '/agent/viewings': typeof AgentViewingsRoute
   '/bundle/$slug': typeof BundleSlugRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/collection/$slug': typeof CollectionSlugRoute
+  '/owner/maintenance': typeof OwnerMaintenanceRoute
+  '/owner/portfolio': typeof OwnerPortfolioRoute
+  '/owner/statements': typeof OwnerStatementsRoute
   '/pages/$slug': typeof PagesSlugRoute
   '/product/$slug': typeof ProductSlugRoute
   '/property/$slug': typeof PropertySlugRoute
+  '/tenant/complaints': typeof TenantComplaintsRoute
+  '/tenant/documents': typeof TenantDocumentsRoute
+  '/tenant/maintenance': typeof TenantMaintenanceRoute
+  '/tenant/move-in': typeof TenantMoveInRoute
+  '/tenant/notifications': typeof TenantNotificationsRoute
+  '/tenant/rent': typeof TenantRentRoute
   '/admin/': typeof AdminIndexRoute
   '/agent/': typeof AgentIndexRoute
   '/bundles/': typeof BundlesIndexRoute
+  '/owner/': typeof OwnerIndexRoute
+  '/tenant/': typeof TenantIndexRoute
   '/account/orders/$orderId': typeof AccountOrdersOrderIdRoute
   '/account/transactions/$transactionId': typeof AccountTransactionsTransactionIdRoute
   '/agent/transactions/$transactionId': typeof AgentTransactionsTransactionIdRoute
@@ -502,6 +644,8 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/agent'
+    | '/owner'
+    | '/tenant'
     | '/account'
     | '/cart'
     | '/checkout'
@@ -534,18 +678,32 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/site-settings'
     | '/admin/submissions'
+    | '/admin/tenancy'
     | '/admin/users'
     | '/agent/inquiries'
+    | '/agent/maintenance'
+    | '/agent/tenants'
     | '/agent/viewings'
     | '/bundle/$slug'
     | '/checkout/success'
     | '/collection/$slug'
+    | '/owner/maintenance'
+    | '/owner/portfolio'
+    | '/owner/statements'
     | '/pages/$slug'
     | '/product/$slug'
     | '/property/$slug'
+    | '/tenant/complaints'
+    | '/tenant/documents'
+    | '/tenant/maintenance'
+    | '/tenant/move-in'
+    | '/tenant/notifications'
+    | '/tenant/rent'
     | '/admin/'
     | '/agent/'
     | '/bundles/'
+    | '/owner/'
+    | '/tenant/'
     | '/account/orders/$orderId'
     | '/account/transactions/$transactionId'
     | '/agent/transactions/$transactionId'
@@ -587,18 +745,32 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/site-settings'
     | '/admin/submissions'
+    | '/admin/tenancy'
     | '/admin/users'
     | '/agent/inquiries'
+    | '/agent/maintenance'
+    | '/agent/tenants'
     | '/agent/viewings'
     | '/bundle/$slug'
     | '/checkout/success'
     | '/collection/$slug'
+    | '/owner/maintenance'
+    | '/owner/portfolio'
+    | '/owner/statements'
     | '/pages/$slug'
     | '/product/$slug'
     | '/property/$slug'
+    | '/tenant/complaints'
+    | '/tenant/documents'
+    | '/tenant/maintenance'
+    | '/tenant/move-in'
+    | '/tenant/notifications'
+    | '/tenant/rent'
     | '/admin'
     | '/agent'
     | '/bundles'
+    | '/owner'
+    | '/tenant'
     | '/account/orders/$orderId'
     | '/account/transactions/$transactionId'
     | '/agent/transactions/$transactionId'
@@ -610,6 +782,8 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/agent'
+    | '/owner'
+    | '/tenant'
     | '/account'
     | '/cart'
     | '/checkout'
@@ -642,18 +816,32 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/site-settings'
     | '/admin/submissions'
+    | '/admin/tenancy'
     | '/admin/users'
     | '/agent/inquiries'
+    | '/agent/maintenance'
+    | '/agent/tenants'
     | '/agent/viewings'
     | '/bundle/$slug'
     | '/checkout/success'
     | '/collection/$slug'
+    | '/owner/maintenance'
+    | '/owner/portfolio'
+    | '/owner/statements'
     | '/pages/$slug'
     | '/product/$slug'
     | '/property/$slug'
+    | '/tenant/complaints'
+    | '/tenant/documents'
+    | '/tenant/maintenance'
+    | '/tenant/move-in'
+    | '/tenant/notifications'
+    | '/tenant/rent'
     | '/admin/'
     | '/agent/'
     | '/bundles/'
+    | '/owner/'
+    | '/tenant/'
     | '/account/orders/$orderId'
     | '/account/transactions/$transactionId'
     | '/agent/transactions/$transactionId'
@@ -666,6 +854,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AgentRouteRoute: typeof AgentRouteRouteWithChildren
+  OwnerRouteRoute: typeof OwnerRouteRouteWithChildren
+  TenantRouteRoute: typeof TenantRouteRouteWithChildren
   AccountRoute: typeof AccountRouteWithChildren
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRouteWithChildren
@@ -708,6 +898,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tenant': {
+      id: '/tenant'
+      path: '/tenant'
+      fullPath: '/tenant'
+      preLoaderRoute: typeof TenantRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/owner': {
+      id: '/owner'
+      path: '/owner'
+      fullPath: '/owner'
+      preLoaderRoute: typeof OwnerRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agent': {
       id: '/agent'
       path: '/agent'
@@ -728,6 +932,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/tenant/': {
+      id: '/tenant/'
+      path: '/'
+      fullPath: '/tenant/'
+      preLoaderRoute: typeof TenantIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/owner/': {
+      id: '/owner/'
+      path: '/'
+      fullPath: '/owner/'
+      preLoaderRoute: typeof OwnerIndexRouteImport
+      parentRoute: typeof OwnerRouteRoute
     }
     '/bundles/': {
       id: '/bundles/'
@@ -750,6 +968,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/tenant/rent': {
+      id: '/tenant/rent'
+      path: '/rent'
+      fullPath: '/tenant/rent'
+      preLoaderRoute: typeof TenantRentRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/notifications': {
+      id: '/tenant/notifications'
+      path: '/notifications'
+      fullPath: '/tenant/notifications'
+      preLoaderRoute: typeof TenantNotificationsRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/move-in': {
+      id: '/tenant/move-in'
+      path: '/move-in'
+      fullPath: '/tenant/move-in'
+      preLoaderRoute: typeof TenantMoveInRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/maintenance': {
+      id: '/tenant/maintenance'
+      path: '/maintenance'
+      fullPath: '/tenant/maintenance'
+      preLoaderRoute: typeof TenantMaintenanceRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/documents': {
+      id: '/tenant/documents'
+      path: '/documents'
+      fullPath: '/tenant/documents'
+      preLoaderRoute: typeof TenantDocumentsRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/complaints': {
+      id: '/tenant/complaints'
+      path: '/complaints'
+      fullPath: '/tenant/complaints'
+      preLoaderRoute: typeof TenantComplaintsRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
     '/property/$slug': {
       id: '/property/$slug'
       path: '/property/$slug'
@@ -770,6 +1030,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/pages/$slug'
       preLoaderRoute: typeof PagesSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/owner/statements': {
+      id: '/owner/statements'
+      path: '/statements'
+      fullPath: '/owner/statements'
+      preLoaderRoute: typeof OwnerStatementsRouteImport
+      parentRoute: typeof OwnerRouteRoute
+    }
+    '/owner/portfolio': {
+      id: '/owner/portfolio'
+      path: '/portfolio'
+      fullPath: '/owner/portfolio'
+      preLoaderRoute: typeof OwnerPortfolioRouteImport
+      parentRoute: typeof OwnerRouteRoute
+    }
+    '/owner/maintenance': {
+      id: '/owner/maintenance'
+      path: '/maintenance'
+      fullPath: '/owner/maintenance'
+      preLoaderRoute: typeof OwnerMaintenanceRouteImport
+      parentRoute: typeof OwnerRouteRoute
     }
     '/collection/$slug': {
       id: '/collection/$slug'
@@ -799,6 +1080,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentViewingsRouteImport
       parentRoute: typeof AgentRouteRoute
     }
+    '/agent/tenants': {
+      id: '/agent/tenants'
+      path: '/tenants'
+      fullPath: '/agent/tenants'
+      preLoaderRoute: typeof AgentTenantsRouteImport
+      parentRoute: typeof AgentRouteRoute
+    }
+    '/agent/maintenance': {
+      id: '/agent/maintenance'
+      path: '/maintenance'
+      fullPath: '/agent/maintenance'
+      preLoaderRoute: typeof AgentMaintenanceRouteImport
+      parentRoute: typeof AgentRouteRoute
+    }
     '/agent/inquiries': {
       id: '/agent/inquiries'
       path: '/inquiries'
@@ -811,6 +1106,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/tenancy': {
+      id: '/admin/tenancy'
+      path: '/tenancy'
+      fullPath: '/admin/tenancy'
+      preLoaderRoute: typeof AdminTenancyRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/submissions': {
@@ -1081,6 +1383,7 @@ interface AdminRouteRouteChildren {
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSiteSettingsRoute: typeof AdminSiteSettingsRoute
   AdminSubmissionsRoute: typeof AdminSubmissionsRoute
+  AdminTenancyRoute: typeof AdminTenancyRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -1112,6 +1415,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSiteSettingsRoute: AdminSiteSettingsRoute,
   AdminSubmissionsRoute: AdminSubmissionsRoute,
+  AdminTenancyRoute: AdminTenancyRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -1122,6 +1426,8 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 
 interface AgentRouteRouteChildren {
   AgentInquiriesRoute: typeof AgentInquiriesRoute
+  AgentMaintenanceRoute: typeof AgentMaintenanceRoute
+  AgentTenantsRoute: typeof AgentTenantsRoute
   AgentViewingsRoute: typeof AgentViewingsRoute
   AgentIndexRoute: typeof AgentIndexRoute
   AgentTransactionsTransactionIdRoute: typeof AgentTransactionsTransactionIdRoute
@@ -1130,6 +1436,8 @@ interface AgentRouteRouteChildren {
 
 const AgentRouteRouteChildren: AgentRouteRouteChildren = {
   AgentInquiriesRoute: AgentInquiriesRoute,
+  AgentMaintenanceRoute: AgentMaintenanceRoute,
+  AgentTenantsRoute: AgentTenantsRoute,
   AgentViewingsRoute: AgentViewingsRoute,
   AgentIndexRoute: AgentIndexRoute,
   AgentTransactionsTransactionIdRoute: AgentTransactionsTransactionIdRoute,
@@ -1138,6 +1446,48 @@ const AgentRouteRouteChildren: AgentRouteRouteChildren = {
 
 const AgentRouteRouteWithChildren = AgentRouteRoute._addFileChildren(
   AgentRouteRouteChildren,
+)
+
+interface OwnerRouteRouteChildren {
+  OwnerMaintenanceRoute: typeof OwnerMaintenanceRoute
+  OwnerPortfolioRoute: typeof OwnerPortfolioRoute
+  OwnerStatementsRoute: typeof OwnerStatementsRoute
+  OwnerIndexRoute: typeof OwnerIndexRoute
+}
+
+const OwnerRouteRouteChildren: OwnerRouteRouteChildren = {
+  OwnerMaintenanceRoute: OwnerMaintenanceRoute,
+  OwnerPortfolioRoute: OwnerPortfolioRoute,
+  OwnerStatementsRoute: OwnerStatementsRoute,
+  OwnerIndexRoute: OwnerIndexRoute,
+}
+
+const OwnerRouteRouteWithChildren = OwnerRouteRoute._addFileChildren(
+  OwnerRouteRouteChildren,
+)
+
+interface TenantRouteRouteChildren {
+  TenantComplaintsRoute: typeof TenantComplaintsRoute
+  TenantDocumentsRoute: typeof TenantDocumentsRoute
+  TenantMaintenanceRoute: typeof TenantMaintenanceRoute
+  TenantMoveInRoute: typeof TenantMoveInRoute
+  TenantNotificationsRoute: typeof TenantNotificationsRoute
+  TenantRentRoute: typeof TenantRentRoute
+  TenantIndexRoute: typeof TenantIndexRoute
+}
+
+const TenantRouteRouteChildren: TenantRouteRouteChildren = {
+  TenantComplaintsRoute: TenantComplaintsRoute,
+  TenantDocumentsRoute: TenantDocumentsRoute,
+  TenantMaintenanceRoute: TenantMaintenanceRoute,
+  TenantMoveInRoute: TenantMoveInRoute,
+  TenantNotificationsRoute: TenantNotificationsRoute,
+  TenantRentRoute: TenantRentRoute,
+  TenantIndexRoute: TenantIndexRoute,
+}
+
+const TenantRouteRouteWithChildren = TenantRouteRoute._addFileChildren(
+  TenantRouteRouteChildren,
 )
 
 interface AccountRouteChildren {
@@ -1177,6 +1527,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AgentRouteRoute: AgentRouteRouteWithChildren,
+  OwnerRouteRoute: OwnerRouteRouteWithChildren,
+  TenantRouteRoute: TenantRouteRouteWithChildren,
   AccountRoute: AccountRouteWithChildren,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRouteWithChildren,

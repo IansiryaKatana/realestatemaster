@@ -1,17 +1,11 @@
-import sanitizeHtml from 'sanitize-html'
+import { sanitizeMarketingHtml as sanitizeBrowser } from './sanitizeHtml.browser'
 
-const ALLOWED_TAGS = [
-  'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'a', 'blockquote', 'hr', 'span', 'div',
-]
+export function sanitizeMarketingHtml(html: string): string {
+  if (import.meta.env.SSR) {
+    const { sanitizeMarketingHtml: sanitizeServer } =
+      require('./sanitizeHtml.server') as typeof import('./sanitizeHtml.server')
+    return sanitizeServer(html)
+  }
 
-const ALLOWED_ATTR = ['href', 'title', 'target', 'rel', 'class']
-
-export function sanitizeMarketingHtml(html: string) {
-  if (!html.trim()) return ''
-  return sanitizeHtml(html, {
-    allowedTags: ALLOWED_TAGS,
-    allowedAttributes: Object.fromEntries(
-      ALLOWED_TAGS.map((tag) => [tag, ALLOWED_ATTR]),
-    ),
-  })
+  return sanitizeBrowser(html)
 }

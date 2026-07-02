@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { adminSheetPanel } from '@/admin/adminClassNames'
+import { adminBtnClose, adminSheetPanel } from '@/admin/adminClassNames'
 import { cn } from '@/lib/utils'
 
 export type DetailField = {
@@ -59,10 +59,7 @@ export function EntityDetailSheet({ open, onOpenChange, title, subtitle, fields,
           <div className="border-t border-[var(--admin-border)] p-4 space-y-3">
             {footer}
             <Dialog.Close asChild>
-              <button
-                type="button"
-                className="w-full rounded-[var(--admin-radius)] border border-[var(--admin-border)] px-4 py-2 text-sm font-medium hover:bg-[var(--admin-primary-muted)]"
-              >
+              <button type="button" className={cn(adminBtnClose, 'w-full')}>
                 Close
               </button>
             </Dialog.Close>

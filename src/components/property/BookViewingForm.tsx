@@ -15,12 +15,14 @@ import {
 } from '@/lib/property/viewingTimeSlots'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { FormPhoneInput } from '@/components/ui/phone-input-field'
+import { phoneFieldSchema } from '@/lib/validators/phone.schema'
 import { cn } from '@/lib/utils'
 
 const contactSchema = z.object({
   fullName: z.string().min(2, 'Name is required'),
   email: z.string().email('Valid email required'),
-  phone: z.string().min(6, 'Phone is required'),
+  phone: phoneFieldSchema,
 })
 
 type ContactValues = z.infer<typeof contactSchema>
@@ -78,6 +80,7 @@ export function BookViewingForm({ product, onSuccess, onCancel, showCancel = tru
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -248,7 +251,7 @@ export function BookViewingForm({ product, onSuccess, onCancel, showCancel = tru
           </div>
           <div>
             <label className="mb-1 block text-sm font-semibold">Phone</label>
-            <Input type="tel" {...register('phone')} />
+            <FormPhoneInput control={control} fieldName="phone" id="phone" variant="public" />
             {errors.phone ? <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p> : null}
           </div>
           <div className="flex justify-between gap-2 pt-2">

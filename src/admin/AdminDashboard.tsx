@@ -1,14 +1,28 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Building2, DollarSign, FileText, FolderOpen, Image, Inbox, KeyRound } from 'lucide-react'
+import {
+  Banknote,
+  Building2,
+  Coins,
+  FileText,
+  FolderOpen,
+  Image,
+  Inbox,
+  KeyRound,
+  MessageSquare,
+  Wrench,
+} from 'lucide-react'
 import { fetchAdminDashboard } from '@/admin/lib/adminRpc'
+import { fetchTenancyDashboard } from '@/lib/tenancy/tenancyRpc'
 import { AdminPageHeading, AdminLoadingState } from '@/admin/components/AdminPageHeading'
+import { AdminStatTile } from '@/admin/components/AdminStatTile'
 import { AdminOrdersChart, type OrderChartData } from '@/admin/components/AdminOrdersChart'
 import { AdminActiveTransactionsPanel } from '@/admin/AdminActiveTransactionsPanel'
 import { tryGetSupabase } from '@/integrations/supabase/client'
-import { useCms } from '@/contexts/CmsContext'
-import { formatCurrency, getCurrencyFromSettings } from '@/lib/currency'
+import { useFormatPrice } from '@/lib/currency'
 import { formatOrdinalShortDate } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import type { Database } from '@/integrations/supabase/database.types'
+import type { LucideIcon } from 'lucide-react'
 
 type NewsletterRow = Database['public']['Tables']['newsletter_subscribers']['Row']
 
@@ -21,13 +35,38 @@ type DashboardCounts = {
   totalSales: number
   activeTransactions: number
   propertyInquiries: number
+  activeLeases: number
+  overdueRent: number
+  pendingVerification: number
+  openComplaints: number
+  openMaintenance: number
+}
+
+type StatCard = {
+  label: string
+  value: string
+  icon: LucideIcon
+  title?: string
+}
+
+type StatTab = {
+  id: string
+  label: string
+  cards: StatCard[]
 }
 
 const EMPTY_CHART: OrderChartData = { daily: [], weekly: [], monthly: [] }
 
+const STAT_TABS: { id: string; label: string }[] = [
+  { id: 'portfolio', label: 'Portfolio' },
+  { id: 'tenancy', label: 'Tenancy' },
+  { id: 'pipeline', label: 'Pipeline' },
+  { id: 'payments', label: 'Payments' },
+]
+
 export function AdminDashboard() {
-  const { snapshot } = useCms()
-  const currency = getCurrencyFromSettings(snapshot.siteSettings)
+  const formatPrice = useFormatPrice()
+  const [activeStatTab, setActiveStatTab] = useState('portfolio')
   const [counts, setCounts] = useState<DashboardCounts | null>(null)
   const [recentNewsletter, setRecentNewsletter] = useState<NewsletterRow[]>([])
   const [orderChart, setOrderChart] = useState<OrderChartData>(EMPTY_CHART)
@@ -38,17 +77,30 @@ export function AdminDashboard() {
     try {
       const data = await fetchAdminDashboard()
       const sb = tryGetSupabase()
-      const [activeTxRes, inquiriesRes] = await Promise.all([
+      const [activeTxRes, inquiriesRes, tenancyRes] = await Promise.all([
         sb
           .from('property_transactions')
           .select('*', { count: 'exact', head: true })
           .not('status', 'in', '(transaction_completed,cancelled,rejected)'),
         sb.from('property_inquiries').select('*', { count: 'exact', head: true }),
+        fetchTenancyDashboard().catch(() => ({
+          activeLeases: 0,
+          overdueRent: 0,
+          pendingVerification: 0,
+          openComplaints: 0,
+          openMaintenance: 0,
+          landlords: 0,
+        })),
       ])
       setCounts({
         ...data.counts,
         activeTransactions: activeTxRes.count ?? 0,
         propertyInquiries: inquiriesRes.count ?? 0,
+        activeLeases: tenancyRes.activeLeases,
+        overdueRent: tenancyRes.overdueRent,
+        pendingVerification: tenancyRes.pendingVerification,
+        openComplaints: tenancyRes.openComplaints,
+        openMaintenance: tenancyRes.openMaintenance,
       })
       setRecentNewsletter(data.recentNewsletter)
       setOrderChart(data.orderChart)
@@ -62,6 +114,11 @@ export function AdminDashboard() {
         totalSales: 0,
         activeTransactions: 0,
         propertyInquiries: 0,
+        activeLeases: 0,
+        overdueRent: 0,
+        pendingVerification: 0,
+        openComplaints: 0,
+        openMaintenance: 0,
       })
       setRecentNewsletter([])
       setOrderChart(EMPTY_CHART)
@@ -76,38 +133,87 @@ export function AdminDashboard() {
 
   if (loading || !counts) return <AdminLoadingState />
 
-  const statCards = [
-    { label: 'Published properties', value: String(counts.products), icon: Building2 },
-    { label: 'Collections', value: String(counts.collections), icon: FolderOpen },
-    { label: 'Active transactions', value: String(counts.activeTransactions), icon: KeyRound },
-    { label: 'Property inquiries', value: String(counts.propertyInquiries), icon: Inbox },
-    { label: 'Open payment quotes', value: String(counts.unreadQuotes), icon: FileText },
-    { label: 'Form submissions', value: String(counts.unreadSubmissions), icon: FileText },
-    { label: 'Media assets', value: String(counts.media), icon: Image },
+  const totalPaymentsFormatted = formatPrice(counts.totalSales)
+
+  const statTabGroups: StatTab[] = [
     {
-      label: 'Total payments',
-      value: formatCurrency(counts.totalSales, { code: currency.code, locale: currency.locale }),
-      icon: DollarSign,
+      id: 'portfolio',
+      label: 'Portfolio',
+      cards: [
+        { label: 'Published properties', value: String(counts.products), icon: Building2 },
+        { label: 'Collections', value: String(counts.collections), icon: FolderOpen },
+        { label: 'Media assets', value: String(counts.media), icon: Image },
+      ],
+    },
+    {
+      id: 'tenancy',
+      label: 'Tenancy',
+      cards: [
+        { label: 'Active leases', value: String(counts.activeLeases), icon: KeyRound },
+        { label: 'Overdue rent', value: String(counts.overdueRent), icon: Banknote },
+        { label: 'Pending verification', value: String(counts.pendingVerification), icon: FileText },
+        { label: 'Open complaints', value: String(counts.openComplaints), icon: MessageSquare },
+        { label: 'Open maintenance', value: String(counts.openMaintenance), icon: Wrench },
+      ],
+    },
+    {
+      id: 'pipeline',
+      label: 'Pipeline',
+      cards: [
+        { label: 'Active transactions', value: String(counts.activeTransactions), icon: Building2 },
+        { label: 'Property inquiries', value: String(counts.propertyInquiries), icon: Inbox },
+        { label: 'Open payment quotes', value: String(counts.unreadQuotes), icon: FileText },
+        { label: 'Form submissions', value: String(counts.unreadSubmissions), icon: Inbox },
+      ],
+    },
+    {
+      id: 'payments',
+      label: 'Payments',
+      cards: [
+        {
+          label: 'Total payments',
+          value: totalPaymentsFormatted,
+          title: totalPaymentsFormatted,
+          icon: Coins,
+        },
+      ],
     },
   ]
+
+  const activeGroup = statTabGroups.find((tab) => tab.id === activeStatTab) ?? statTabGroups[0]
 
   return (
     <div>
       <AdminPageHeading title="Dashboard" subtitle="Overview of your real estate platform" />
 
-      <div className="admin-stat-grid">
-        {statCards.map((card) => {
-          const Icon = card.icon
-          return (
-            <div key={card.label} className="admin-stat-tile">
-              <div className="flex items-center justify-between gap-2">
-                <p className="truncate text-sm text-[var(--admin-muted)]">{card.label}</p>
-                <Icon className="h-4 w-4 shrink-0 text-[var(--admin-primary)]" />
-              </div>
-              <p className="mt-2 text-2xl font-semibold text-[var(--admin-text)] lg:text-3xl">{card.value}</p>
-            </div>
-          )
-        })}
+      <div className="admin-tab-nav-row mb-4">
+        <div className="admin-tab-nav" role="tablist" aria-label="Dashboard metrics">
+          {STAT_TABS.map((tab) => {
+            const isActive = tab.id === activeStatTab
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                className={cn('admin-tab-nav-item', isActive && 'admin-tab-nav-item-active')}
+                onClick={() => setActiveStatTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div
+        role="tabpanel"
+        className="admin-stat-grid admin-stat-grid--tabbed"
+        aria-label={`${activeGroup.label} metrics`}
+      >
+        {activeGroup.cards.map((card) => (
+          <AdminStatTile key={card.label} {...card} />
+        ))}
       </div>
 
       <AdminOrdersChart data={orderChart} />

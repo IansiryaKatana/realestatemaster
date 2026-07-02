@@ -58,6 +58,7 @@ export function AdminCustomers() {
       </div>
       <AdminErrorBanner message={error} />
       <div className="admin-table-frame">
+        <div className="admin-table-wrap">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="bg-[var(--admin-surface)] text-[var(--admin-muted)]">
             <tr>
@@ -68,16 +69,25 @@ export function AdminCustomers() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.email} className="border-t border-[var(--admin-border)]">
-                <td className="px-4 py-3 font-medium">{row.email}</td>
-                <td className="px-4 py-3">{row.order_count}</td>
-                <td className="px-4 py-3">{formatPrice(row.lifetime_value)}</td>
-                <td className="px-4 py-3">{row.last_order_at ? new Date(row.last_order_at).toLocaleDateString() : '—'}</td>
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="px-4 py-8 text-center text-sm text-[var(--admin-muted)]">
+                  No client payment records yet.
+                </td>
               </tr>
-            ))}
+            ) : (
+              rows.map((row) => (
+                <tr key={row.email} className="border-t border-[var(--admin-border)]">
+                  <td className="px-4 py-3 font-medium">{row.email}</td>
+                  <td className="px-4 py-3">{row.order_count}</td>
+                  <td className="px-4 py-3">{formatPrice(row.lifetime_value)}</td>
+                  <td className="px-4 py-3">{row.last_order_at ? new Date(row.last_order_at).toLocaleDateString() : '—'}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
+        </div>
         <div className="border-t border-[var(--admin-border)] p-4">
           <AdminTablePagination {...pagination} onPageChange={pagination.setPage} onPageSizeChange={pagination.setPageSize} />
         </div>

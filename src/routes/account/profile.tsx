@@ -10,6 +10,7 @@ import { StorefrontLayout } from '@/components/layout/StorefrontLayout'
 import { SectionContainer } from '@/components/layout/SectionContainer'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { PhoneInputField } from '@/components/ui/phone-input-field'
 import { Textarea } from '@/components/ui/textarea'
 
 export const Route = createFileRoute('/account/profile')({
@@ -86,12 +87,21 @@ function AccountProfilePage() {
       <PageHero title="My profile" subtitle="Used for contracts and property applications" backTo="/account" backLabel="Back to account" />
       <SectionContainer className="max-w-2xl py-10">
         <div className="grid gap-4">
-          {(['full_name', 'phone', 'nationality', 'emirates_id', 'passport_number'] as const).map((key) => (
+          {(['full_name', 'nationality', 'emirates_id', 'passport_number'] as const).map((key) => (
             <div key={key}>
               <label className="mb-1 block text-sm font-semibold capitalize">{key.replace(/_/g, ' ')}</label>
               <Input value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} />
             </div>
           ))}
+          <div>
+            <label className="mb-1 block text-sm font-semibold">Phone</label>
+            <PhoneInputField
+              id="profile-phone"
+              value={form.phone || undefined}
+              onChange={(value) => setForm((f) => ({ ...f, phone: value ?? '' }))}
+              variant="public"
+            />
+          </div>
           <div>
             <label className="mb-1 block text-sm font-semibold">Address</label>
             <Textarea rows={3} value={form.address} onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))} />

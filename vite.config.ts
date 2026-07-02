@@ -69,4 +69,7 @@ export default defineConfig(({ command }) => ({
             ]
           : []),
   ],
+  ssr: {
+    external: ['sanitize-html'],
+  },
 }))

@@ -3,7 +3,7 @@ import { Check, ImagePlus, Loader2, Search, Upload } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { listCmsMedia, type CmsMediaRow } from '@/admin/lib/adminRpc'
 import { uploadCmsMediaFile } from '@/admin/lib/uploadMedia'
-import { adminBtnPrimary, adminBtnSecondary, adminInput, adminLabel } from '@/admin/adminClassNames'
+import { adminBtnClose, adminBtnPrimary, adminBtnSecondary, adminInput, adminLabel } from '@/admin/adminClassNames'
 import { cn } from '@/lib/utils'
 
 type Tab = 'library' | 'upload'
@@ -251,7 +251,7 @@ export function MediaPickerModal({
         </div>
 
         <div className="flex flex-col-reverse gap-2 border-t border-[var(--admin-border)] px-5 py-4 sm:flex-row sm:justify-end">
-          <button type="button" className={adminBtnSecondary} onClick={() => onOpenChange(false)}>
+          <button type="button" className={adminBtnClose} onClick={() => onOpenChange(false)}>
             Cancel
           </button>
           <button type="button" className={adminBtnPrimary} disabled={!selectedUrl} onClick={confirmSelection}>

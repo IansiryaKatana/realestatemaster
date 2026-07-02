@@ -935,6 +935,89 @@ export type Database = {
           },
         ]
       }
+      leases: {
+        Row: {
+          assigned_agent_id: string | null
+          cheque_count: number | null
+          created_at: string
+          end_date: string | null
+          id: string
+          landlord_owner_id: string | null
+          payment_frequency: string
+          product_id: string
+          property_transaction_id: string | null
+          rent_amount: number
+          security_deposit: number | null
+          start_date: string
+          status: string
+          tenant_user_id: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_agent_id?: string | null
+          cheque_count?: number | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          landlord_owner_id?: string | null
+          payment_frequency?: string
+          product_id: string
+          property_transaction_id?: string | null
+          rent_amount: number
+          security_deposit?: number | null
+          start_date: string
+          status?: string
+          tenant_user_id: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_agent_id?: string | null
+          cheque_count?: number | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          landlord_owner_id?: string | null
+          payment_frequency?: string
+          product_id?: string
+          property_transaction_id?: string | null
+          rent_amount?: number
+          security_deposit?: number | null
+          start_date?: string
+          status?: string
+          tenant_user_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leases_assigned_agent_id_fkey"
+            columns: ["assigned_agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leases_landlord_owner_id_fkey"
+            columns: ["landlord_owner_id"]
+            isOneToOne: false
+            referencedRelation: "property_owners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leases_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leases_property_transaction_id_fkey"
+            columns: ["property_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "property_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lifestyle_cards: {
         Row: {
           created_at: string
@@ -1009,6 +1092,54 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      move_in_checklists: {
+        Row: {
+          agent_signed_at: string | null
+          created_at: string
+          handover_record_id: string | null
+          id: string
+          items: Json
+          lease_id: string
+          tenant_signed_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          agent_signed_at?: string | null
+          created_at?: string
+          handover_record_id?: string | null
+          id?: string
+          items?: Json
+          lease_id: string
+          tenant_signed_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agent_signed_at?: string | null
+          created_at?: string
+          handover_record_id?: string | null
+          id?: string
+          items?: Json
+          lease_id?: string
+          tenant_signed_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "move_in_checklists_handover_record_id_fkey"
+            columns: ["handover_record_id"]
+            isOneToOne: false
+            referencedRelation: "handover_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "move_in_checklists_lease_id_fkey"
+            columns: ["lease_id"]
+            isOneToOne: false
+            referencedRelation: "leases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       nav_links: {
         Row: {
@@ -1265,6 +1396,50 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      owner_statements: {
+        Row: {
+          created_at: string
+          fees: number
+          gross_rent: number
+          id: string
+          net_payout: number
+          pdf_url: string | null
+          period_end: string
+          period_start: string
+          property_owner_id: string
+        }
+        Insert: {
+          created_at?: string
+          fees?: number
+          gross_rent?: number
+          id?: string
+          net_payout?: number
+          pdf_url?: string | null
+          period_end: string
+          period_start: string
+          property_owner_id: string
+        }
+        Update: {
+          created_at?: string
+          fees?: number
+          gross_rent?: number
+          id?: string
+          net_payout?: number
+          pdf_url?: string | null
+          period_end?: string
+          period_start?: string
+          property_owner_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "owner_statements_property_owner_id_fkey"
+            columns: ["property_owner_id"]
+            isOneToOne: false
+            referencedRelation: "property_owners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payment_breakdowns: {
         Row: {
@@ -1920,6 +2095,87 @@ export type Database = {
           },
         ]
       }
+      property_owner_assignments: {
+        Row: {
+          created_at: string
+          id: string
+          management_fee_pct: number
+          ownership_share: number
+          product_id: string
+          property_owner_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          management_fee_pct?: number
+          ownership_share?: number
+          product_id: string
+          property_owner_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          management_fee_pct?: number
+          ownership_share?: number
+          product_id?: string
+          property_owner_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_owner_assignments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_owner_assignments_property_owner_id_fkey"
+            columns: ["property_owner_id"]
+            isOneToOne: false
+            referencedRelation: "property_owners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_owners: {
+        Row: {
+          auth_user_id: string | null
+          company_name: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean
+          phone: string | null
+          tax_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          auth_user_id?: string | null
+          company_name?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          auth_user_id?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       property_statuses: {
         Row: {
           id: string
@@ -2058,6 +2314,214 @@ export type Database = {
           identifier?: string
         }
         Relationships: []
+      }
+      rent_installments: {
+        Row: {
+          amount: number
+          created_at: string
+          due_date: string
+          id: string
+          installment_type: string
+          lease_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          due_date: string
+          id?: string
+          installment_type?: string
+          lease_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          due_date?: string
+          id?: string
+          installment_type?: string
+          lease_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rent_installments_lease_id_fkey"
+            columns: ["lease_id"]
+            isOneToOne: false
+            referencedRelation: "leases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rent_payments: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          created_at: string
+          id: string
+          installment_id: string
+          payment_method: string
+          proof_url: string | null
+          status: string
+          stripe_payment_id: string | null
+          submitted_by: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          created_at?: string
+          id?: string
+          installment_id: string
+          payment_method?: string
+          proof_url?: string | null
+          status?: string
+          stripe_payment_id?: string | null
+          submitted_by?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          created_at?: string
+          id?: string
+          installment_id?: string
+          payment_method?: string
+          proof_url?: string | null
+          status?: string
+          stripe_payment_id?: string | null
+          submitted_by?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rent_payments_installment_id_fkey"
+            columns: ["installment_id"]
+            isOneToOne: false
+            referencedRelation: "rent_installments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_request_messages: {
+        Row: {
+          attachments: Json
+          author_role: string
+          author_user_id: string
+          body: string
+          created_at: string
+          id: string
+          request_id: string
+        }
+        Insert: {
+          attachments?: Json
+          author_role: string
+          author_user_id: string
+          body: string
+          created_at?: string
+          id?: string
+          request_id: string
+        }
+        Update: {
+          attachments?: Json
+          author_role?: string
+          author_user_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_request_messages_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_requests: {
+        Row: {
+          assigned_agent_id: string | null
+          category: string | null
+          created_at: string
+          description: string
+          id: string
+          lease_id: string | null
+          priority: string
+          product_id: string | null
+          request_type: string
+          resolved_at: string | null
+          sla_due_at: string | null
+          status: string
+          tenant_user_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_agent_id?: string | null
+          category?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          lease_id?: string | null
+          priority?: string
+          product_id?: string | null
+          request_type: string
+          resolved_at?: string | null
+          sla_due_at?: string | null
+          status?: string
+          tenant_user_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_agent_id?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          lease_id?: string | null
+          priority?: string
+          product_id?: string | null
+          request_type?: string
+          resolved_at?: string | null
+          sla_due_at?: string | null
+          status?: string
+          tenant_user_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_requests_assigned_agent_id_fkey"
+            columns: ["assigned_agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_lease_id_fkey"
+            columns: ["lease_id"]
+            isOneToOne: false
+            referencedRelation: "leases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shipping_zones: {
         Row: {
@@ -2226,6 +2690,44 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      tenant_documents: {
+        Row: {
+          created_at: string
+          doc_type: string
+          file_url: string
+          id: string
+          lease_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          doc_type: string
+          file_url: string
+          id?: string
+          lease_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          doc_type?: string
+          file_url?: string
+          id?: string
+          lease_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_documents_lease_id_fkey"
+            columns: ["lease_id"]
+            isOneToOne: false
+            referencedRelation: "leases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       uploaded_contracts: {
         Row: {
@@ -2422,8 +2924,12 @@ export type Database = {
         Returns: undefined
       }
       current_agent_id: { Args: never; Returns: string }
+      current_landlord_id: { Args: never; Returns: string }
       is_admin: { Args: never; Returns: boolean }
+      is_admin_reader: { Args: never; Returns: boolean }
       is_agent: { Args: never; Returns: boolean }
+      is_landlord: { Args: never; Returns: boolean }
+      is_tenant: { Args: never; Returns: boolean }
       next_property_invoice_number: { Args: never; Returns: string }
       next_property_transaction_number: { Args: never; Returns: string }
       reserved_inventory_quantity: {
@@ -2449,6 +2955,10 @@ export type Database = {
       resolve_shipping_rate: {
         Args: { p_country: string; p_subtotal: number }
         Returns: number
+      }
+      rpc_activate_lease_from_transaction: {
+        Args: { p_transaction_id: string }
+        Returns: Json
       }
       rpc_admin_fulfill_order_inventory: {
         Args: { p_order_id: string }
@@ -2515,8 +3025,27 @@ export type Database = {
         Args: { p_transaction_id: string }
         Returns: Json
       }
+      rpc_create_service_request: {
+        Args: {
+          p_category: string
+          p_description: string
+          p_lease_id: string
+          p_priority: string
+          p_title: string
+          p_type: string
+        }
+        Returns: Json
+      }
       rpc_fulfill_order_inventory: {
         Args: { p_order_id: string }
+        Returns: Json
+      }
+      rpc_generate_owner_statement: {
+        Args: {
+          p_owner_id: string
+          p_period_end: string
+          p_period_start: string
+        }
         Returns: Json
       }
       rpc_get_admin_dashboard: { Args: never; Returns: Json }
@@ -2651,6 +3180,7 @@ export type Database = {
       }
       rpc_get_storefront_bundle: { Args: { p_slug: string }; Returns: Json }
       rpc_get_storefront_product: { Args: { p_slug: string }; Returns: Json }
+      rpc_get_tenancy_dashboard: { Args: never; Returns: Json }
       rpc_list_admin_customers: {
         Args: { p_limit?: number; p_offset?: number; p_search?: string }
         Returns: Json
@@ -2793,6 +3323,15 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_submit_rent_payment_proof: {
+        Args: {
+          p_amount: number
+          p_installment_id: string
+          p_method: string
+          p_proof_url?: string
+        }
+        Returns: Json
+      }
       rpc_subscribe_newsletter: {
         Args: { p_email: string; p_source?: string }
         Returns: Json
@@ -2810,7 +3349,23 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_toggle_move_in_item: {
+        Args: { p_checklist_id: string; p_done: boolean; p_item_id: string }
+        Returns: Json
+      }
       rpc_toggle_wishlist: { Args: { p_product_id: string }; Returns: Json }
+      rpc_update_service_request_status: {
+        Args: {
+          p_assigned_agent_id?: string
+          p_request_id: string
+          p_status: string
+        }
+        Returns: Json
+      }
+      rpc_verify_rent_payment: {
+        Args: { p_approve: boolean; p_notes?: string; p_payment_id: string }
+        Returns: Json
+      }
       user_has_purchased_product: {
         Args: { p_product_id: string; p_user_id: string }
         Returns: boolean

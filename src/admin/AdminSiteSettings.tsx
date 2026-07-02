@@ -24,6 +24,7 @@ import {
   SUPPORTED_CURRENCIES,
 } from '@/lib/currency'
 import { BrandedSelect } from '@/components/ui/BrandedSelect'
+import { PhoneInputField } from '@/components/ui/phone-input-field'
 import { adminBtnDanger, adminBtnPrimary, adminBtnSecondary, adminInput, adminLabel } from '@/admin/adminClassNames'
 import { sanitizeMarketingHtml } from '@/lib/sanitizeHtml'
 
@@ -301,34 +302,34 @@ export function AdminSiteSettings() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className={adminLabel}>Phone (call button)</label>
-            <input
-              className={adminInput}
-              value={entries.find((e) => e.key === 'contact_phone')?.value ?? ''}
-              onChange={(e) => {
-                const val = e.target.value
+            <PhoneInputField
+              value={entries.find((e) => e.key === 'contact_phone')?.value ?? undefined}
+              onChange={(value) => {
+                const val = value ?? ''
                 setEntries((prev) => {
                   const idx = prev.findIndex((x) => x.key === 'contact_phone')
                   if (idx >= 0) return prev.map((x, i) => (i === idx ? { ...x, value: val } : x))
                   return [...prev, { key: 'contact_phone', value: val, isNew: true }]
                 })
               }}
-              placeholder="+254 712 345 678"
+              variant="admin"
+              placeholder="+971 50 123 4567"
             />
           </div>
           <div>
             <label className={adminLabel}>WhatsApp number</label>
-            <input
-              className={adminInput}
-              value={entries.find((e) => e.key === 'contact_whatsapp')?.value ?? ''}
-              onChange={(e) => {
-                const val = e.target.value
+            <PhoneInputField
+              value={entries.find((e) => e.key === 'contact_whatsapp')?.value ?? undefined}
+              onChange={(value) => {
+                const val = value ?? ''
                 setEntries((prev) => {
                   const idx = prev.findIndex((x) => x.key === 'contact_whatsapp')
                   if (idx >= 0) return prev.map((x, i) => (i === idx ? { ...x, value: val } : x))
                   return [...prev, { key: 'contact_whatsapp', value: val, isNew: true }]
                 })
               }}
-              placeholder="+254 712 345 678"
+              variant="admin"
+              placeholder="+971 50 123 4567"
             />
           </div>
           <div className="sm:col-span-2">

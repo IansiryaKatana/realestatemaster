@@ -15,11 +15,13 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { FormPhoneInput } from '@/components/ui/phone-input-field'
+import { phoneFieldSchema } from '@/lib/validators/phone.schema'
 
 const schema = z.object({
   fullName: z.string().min(2, 'Name is required'),
   email: z.string().email('Valid email required'),
-  phone: z.string().min(6, 'Phone is required'),
+  phone: phoneFieldSchema,
 })
 
 type PropertyQuickInquiryDialogProps = {
@@ -38,6 +40,7 @@ export function PropertyQuickInquiryDialog({
   const { user } = useStorefrontAuth()
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
@@ -84,7 +87,7 @@ export function PropertyQuickInquiryDialog({
           </div>
           <div>
             <label className="mb-1 block text-sm font-semibold">Phone</label>
-            <Input type="tel" {...register('phone')} />
+            <FormPhoneInput control={control} fieldName="phone" id="phone" variant="public" />
             {errors.phone ? <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p> : null}
           </div>
           <div>

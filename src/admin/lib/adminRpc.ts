@@ -19,11 +19,12 @@ export async function fetchAdminSession() {
   const supabase = getClient()
   const { data, error } = await supabase.rpc('rpc_get_admin_session')
   if (error) throw new Error(error.message)
-  const result = data as RpcOk<{ is_admin: boolean; can_edit: boolean; role: string | null }> | RpcErr
-  if (!result?.ok) return { isAdmin: false, canEdit: false, role: null as string | null }
+  const result = data as RpcOk<{ is_admin: boolean; can_edit: boolean; can_manage_users: boolean; role: string | null }> | RpcErr
+  if (!result?.ok) return { isAdmin: false, canEdit: false, canManageUsers: false, role: null as string | null }
   return {
     isAdmin: Boolean(result.is_admin),
     canEdit: Boolean(result.can_edit),
+    canManageUsers: Boolean(result.can_manage_users),
     role: result.role,
   }
 }

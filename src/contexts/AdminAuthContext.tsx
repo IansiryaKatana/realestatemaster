@@ -17,6 +17,8 @@ type AdminAuthContextValue = {
   session: Session | null
   loading: boolean
   isAdmin: boolean
+  canEdit: boolean
+  canManageUsers: boolean
   role: AdminRole | null
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
@@ -28,17 +30,23 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [canEdit, setCanEdit] = useState(false)
+  const [canManageUsers, setCanManageUsers] = useState(false)
   const [role, setRole] = useState<AdminRole | null>(null)
 
   const refreshAdminStatus = useCallback(async (currentSession: Session | null) => {
     if (!currentSession || !isSupabaseConfigured()) {
       setIsAdmin(false)
+      setCanEdit(false)
+      setCanManageUsers(false)
       setRole(null)
       return
     }
 
     if (!tryGetSupabase()) {
       setIsAdmin(false)
+      setCanEdit(false)
+      setCanManageUsers(false)
       setRole(null)
       return
     }
@@ -47,13 +55,19 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       const result = await fetchAdminSession()
       if (result.role && ['owner', 'admin', 'editor', 'viewer'].includes(result.role)) {
         setIsAdmin(result.isAdmin)
+        setCanEdit(result.canEdit)
+        setCanManageUsers(result.canManageUsers)
         setRole(result.role as AdminRole)
       } else {
         setIsAdmin(false)
+        setCanEdit(false)
+        setCanManageUsers(false)
         setRole(null)
       }
     } catch {
       setIsAdmin(false)
+      setCanEdit(false)
+      setCanManageUsers(false)
       setRole(null)
     }
   }, [])
@@ -95,12 +109,14 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     if (supabase) await supabase.auth.signOut()
     setSession(null)
     setIsAdmin(false)
+    setCanEdit(false)
+    setCanManageUsers(false)
     setRole(null)
   }, [])
 
   const value = useMemo(
-    () => ({ session, loading, isAdmin, role, signIn, signOut }),
-    [session, loading, isAdmin, role, signIn, signOut],
+    () => ({ session, loading, isAdmin, canEdit, canManageUsers, role, signIn, signOut }),
+    [session, loading, isAdmin, canEdit, canManageUsers, role, signIn, signOut],
   )
 
   return <AdminAuthContext.Provider value={value}>{children}</AdminAuthContext.Provider>

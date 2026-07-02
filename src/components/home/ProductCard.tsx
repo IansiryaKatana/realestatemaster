@@ -81,7 +81,7 @@ export function ProductCard({ product }: { product: Product }) {
           )}
         </div>
         <Link to={isProperty ? '/property/$slug' : '/product/$slug'} params={{ slug: product.slug }}>
-          <h3 className="line-clamp-2 text-sm font-extrabold leading-snug text-text-brown md:text-2xl">{product.name}</h3>
+          <h3 className="line-clamp-2 text-sm font-extrabold leading-snug text-text-brown md:text-xl">{product.name}</h3>
         </Link>
         {isProperty ? (
           <PropertyStats product={product} compact />

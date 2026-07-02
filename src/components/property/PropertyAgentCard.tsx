@@ -23,18 +23,20 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { FormPhoneInput } from '@/components/ui/phone-input-field'
+import { phoneFieldSchema } from '@/lib/validators/phone.schema'
 
 type PropertyAgentMeta = ReturnType<typeof resolvePropertyMeta>
 
 const emailSchema = z.object({
   fullName: z.string().min(2, 'Name is required'),
   email: z.string().email('Valid email required'),
-  phone: z.string().min(6, 'Phone is required'),
+  phone: phoneFieldSchema,
 })
 
 const callbackSchema = z.object({
   fullName: z.string().min(2, 'Name is required'),
-  phone: z.string().min(6, 'Phone is required'),
+  phone: phoneFieldSchema,
 })
 
 type PropertyAgentContentProps = {
@@ -189,7 +191,7 @@ export function PropertyAgentContent({ product, meta }: PropertyAgentContentProp
             </div>
             <div>
               <label className="mb-1 block text-sm font-semibold">Phone</label>
-              <Input type="tel" {...emailForm.register('phone')} />
+              <FormPhoneInput control={emailForm.control} fieldName="phone" id="email-phone" variant="public" />
               {emailForm.formState.errors.phone ? (
                 <p className="mt-1 text-xs text-red-600">{emailForm.formState.errors.phone.message}</p>
               ) : null}
@@ -224,7 +226,7 @@ export function PropertyAgentContent({ product, meta }: PropertyAgentContentProp
             </div>
             <div>
               <label className="mb-1 block text-sm font-semibold">Phone number</label>
-              <Input type="tel" {...callbackForm.register('phone')} />
+              <FormPhoneInput control={callbackForm.control} fieldName="phone" id="callback-phone" variant="public" />
               {callbackForm.formState.errors.phone ? (
                 <p className="mt-1 text-xs text-red-600">{callbackForm.formState.errors.phone.message}</p>
               ) : null}

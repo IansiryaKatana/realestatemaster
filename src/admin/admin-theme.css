@@ -87,6 +87,15 @@
   white-space: nowrap;
 }
 
+button.admin-tab-nav-item {
+  background: transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+  font: inherit;
+}
+
 .admin-tab-nav-item:hover {
   color: var(--admin-text);
 }
@@ -167,6 +176,8 @@
 }
 
 .admin-stat-tile {
+  min-width: 0;
+  overflow: hidden;
   padding: 1.25rem;
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius);
@@ -178,8 +189,22 @@
   gap: 0.75rem;
 }
 
+.admin-stat-grid--tabbed {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 480px) {
+  .admin-stat-grid--tabbed {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 640px) {
   .admin-stat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .admin-stat-grid--tabbed {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -187,6 +212,10 @@
 @media (min-width: 1024px) {
   .admin-stat-grid {
     grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .admin-stat-grid--tabbed {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
