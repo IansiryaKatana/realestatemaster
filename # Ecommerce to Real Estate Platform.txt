@@ -1,0 +1,878 @@
+# Ecommerce to Real Estate Platform Conversion Guide
+
+## 1. Project Objective
+
+Convert the existing ecommerce platform into a full real estate rental and sales platform.
+
+The current system already includes the full codebase, database schema, workflows, seeded data, admin management, user accounts, and product-based frontend structure. The goal is to repurpose the existing ecommerce logic into a real estate workflow where products become properties, product categories become property types or locations, and purchase/rental actions become viewing, rent, buy, contract, payment, and handover workflows.
+
+The main development focus is to update:
+
+* Frontend copy and imagery
+* Product terminology into property terminology
+* Product cards and property detail pages
+* Admin property management fields
+* Agent assignment and commission logic
+* Viewing, declaration, contract, payment, and handover workflows
+* Real estate agency information
+* Notifications between clients, agents, and admin
+* Contract generation and upload/review flow
+
+---
+
+# 2. Terminology Conversion
+
+## Current Ecommerce Terms
+
+* Product
+* Product card
+* Product detail page
+* Price
+* Cart / checkout
+* Buy now
+* Customer
+* Order
+* Invoice
+* Admin product management
+
+## New Real Estate Terms
+
+* Property
+* Property card
+* Property detail page
+* Rent / sale price
+* Booking / application / payment workflow
+* Rent now / buy now
+* Client / tenant / buyer
+* Property transaction
+* Invoice / payment breakdown
+* Admin property management
+
+---
+
+# 3. Property Types
+
+The platform should support both rental and sale properties.
+
+## Rental Properties
+
+Rental property cards should have the following primary actions:
+
+* Book a Viewing
+* Rent Now
+
+Rental property workflows should include viewing, client declaration, agent approval, contract request, contract generation, signed contract upload, payment, and handover.
+
+## Sale Properties
+
+Sale property cards should have the following primary actions:
+
+* Book a Viewing
+* Buy Now
+
+Sale property workflows should follow a similar structure but use buyer/sale-specific wording instead of tenant/rental wording.
+
+---
+
+# 4. Frontend Property Card Updates
+
+Each property card should display real estate-specific information.
+
+## Suggested Property Card Fields
+
+* Property image
+* Property title
+* Property type
+* Location / area
+* Rent price or sale price
+* Bedrooms
+* Bathrooms
+* Property size
+* Furnishing status
+* Availability status
+* Assigned agent
+* Short description
+* Primary action buttons
+
+## Rental Property Buttons
+
+* Book a Viewing
+* Rent Now
+
+## Sale Property Buttons
+
+* Book a Viewing
+* Buy Now
+
+The frontend should clearly detect whether the property is for rent or sale and render the correct button labels.
+
+---
+
+# 5. Property Detail Page
+
+The property detail page should become a complete real estate listing page.
+
+## First Section / Hero Area
+
+The first section should use a map-based background.
+
+If exact property location is available:
+
+* Load the exact property map location.
+
+If exact property location is not available:
+
+* Load the general area or vicinity map using the assigned location/area data.
+
+## Property Detail Page Sections
+
+The page should include:
+
+1. Hero section with map background
+2. Property image gallery
+3. Property title and location
+4. Rent or sale price
+5. Property highlights
+6. Description
+7. Amenities / features
+8. Bedrooms, bathrooms, size, and furnishing status
+9. Location / area information
+10. Assigned agent information
+11. Contact form
+12. Viewing booking form
+13. Rent Now or Buy Now workflow trigger
+14. Similar properties
+
+---
+
+# 6. Property Contact Forms
+
+Each property detail page should include a contact form.
+
+## Contact Form Fields
+
+* Full name
+* Email
+* Phone number
+* Message
+* Preferred viewing date
+* Preferred viewing time
+* Interested in renting / buying
+* Property reference
+
+## Form Submission Logic
+
+When a client submits a property inquiry:
+
+* Send the inquiry to the assigned agent.
+* Send a copy to the company email.
+* If possible, trigger a WhatsApp message or WhatsApp link to the assigned agent.
+* Save the inquiry in the database.
+* Attach the inquiry to the property record and client record where applicable.
+
+---
+
+# 7. Admin: Real Estate Agency Information
+
+The admin panel should include a dedicated section for real estate agency information.
+
+## Agency Information Fields
+
+* Agency name
+* Trade license number
+* RERA number if applicable
+* Company email
+* Company phone
+* Company WhatsApp number
+* Company address
+* Company logo
+* Authorized signatory name
+* Authorized signatory title
+* Default contract terms
+* Default payment terms
+* Default service charges
+* Default security deposit rules
+* Default commission rules
+
+This information should be used automatically when generating contracts, invoices, emails, and client-facing documents.
+
+---
+
+# 8. Admin: Agent Management
+
+The admin panel should include records of real estate agents.
+
+## Agent Fields
+
+* Agent name
+* Email
+* Phone number
+* WhatsApp number
+* Profile photo
+* License number if applicable
+* Assigned properties
+* Default commission
+* Active / inactive status
+
+Agents should have their own account dashboard.
+
+Agents should be notified when clients interact with properties assigned to them.
+
+---
+
+# 9. Agent Commission Logic
+
+Agents should be able to define a default commission amount or commission percentage.
+
+## Commission Requirements
+
+* Each agent can set a default commission.
+* When creating or editing a property, the commission field should be visible.
+* The property-level commission can use the agent’s default commission or be manually changed.
+* Commission can be negotiated up or down per property or per transaction.
+* Commission should appear clearly in the client payment breakdown before payment.
+* Commission should be included in invoice generation.
+
+---
+
+# 10. Admin: Property Management
+
+The existing product creation/editing workflow should be converted into property creation/editing.
+
+## Property Fields
+
+* Property title
+* Property reference number
+* Property type
+* Listing type: rent or sale
+* Property status
+* Area / location
+* Exact address
+* Map coordinates if available
+* Bedrooms
+* Bathrooms
+* Size
+* Furnishing status
+* Availability date
+* Rent price or sale price
+* Security deposit
+* Agent commission
+* Other charges
+* Assigned agent
+* Property images
+* Property gallery
+* Property description
+* Amenities
+* Viewing availability
+* Contract terms
+* Featured property toggle
+* Published / unpublished status
+
+## Location Logic
+
+The system should support both:
+
+* General area / vicinity
+* Exact property location
+
+If exact location is missing, the property detail page should use the general area map.
+
+---
+
+# 11. Seeded Data Requirements
+
+The system should include seeded real estate data.
+
+## Required Seeded Data
+
+* Property types
+* Listing types
+* Areas / locations
+* Amenities
+* Furnishing statuses
+* Property statuses
+* Payment charge types
+* Default agency information
+* Sample agents
+* Sample rental properties
+* Sample sale properties
+
+## Suggested Property Types
+
+* Apartment
+* Villa
+* Townhouse
+* Studio
+* Penthouse
+* Office
+* Retail space
+* Warehouse
+* Land
+
+## Suggested Property Statuses
+
+* Available
+* Reserved
+* Under offer
+* Rented
+* Sold
+* Unpublished
+
+---
+
+# 12. Client Account Workflow
+
+Clients should have an account where they can manage viewing requests, declarations, contracts, payments, and transaction status.
+
+## Client Dashboard Sections
+
+* Saved properties
+* Viewing requests
+* Active applications
+* Contract requests
+* Uploaded contracts
+* Payment status
+* Invoices
+* Handover status
+* Notifications
+
+---
+
+# 13. Viewing Workflow
+
+## Step 1: Client Books a Viewing
+
+The client selects a property and books a viewing.
+
+The system should:
+
+* Save the viewing request
+* Notify the assigned agent
+* Notify admin if required
+* Show the viewing status in the client account
+* Show the viewing request in the agent account
+
+## Step 2: Viewing Completed
+
+The agent can mark the viewing as:
+
+* Pending
+* Scheduled
+* Completed
+* Cancelled
+* No show
+
+After the viewing is completed, the client should be able to declare whether they want to proceed.
+
+---
+
+# 14. Client Declaration Workflow
+
+After viewing a property, the client must declare whether they want to proceed.
+
+## Client Declaration Options
+
+* Proceed
+* Not proceed
+* Need more information
+
+## If Client Declares “Proceed”
+
+The system should:
+
+* Notify the assigned agent
+* Update the transaction status
+* Allow the agent to review and approve the next step
+
+## If Client Declares “Not Proceed”
+
+The system should:
+
+* Close or archive the transaction
+* Notify the agent
+* Keep the record in the client and agent dashboards
+
+---
+
+# 15. Agent Approval Workflow
+
+When a client declares they want to proceed, the assigned agent receives a notification.
+
+The agent can then:
+
+* Approve the client to proceed
+* Request more information
+* Reject the request
+* Add internal notes
+
+Once approved, the client can request a contract.
+
+---
+
+# 16. Contract Request Workflow
+
+After agent approval, the client should be able to request a contract.
+
+## Contract Request Logic
+
+When the client requests a contract:
+
+* Notify the assigned agent.
+* Show the request inside the agent dashboard.
+* Attach the request to the relevant property and client.
+* Mark the contract status as requested.
+
+---
+
+# 17. Contract Generation Workflow
+
+The agent should be able to generate a contract from the system.
+
+The contract should automatically pull information from:
+
+## Client Information
+
+* Full name
+* Email
+* Phone number
+* Emirates ID or passport information if available
+* Address
+* Account profile information
+
+## Property Information
+
+* Property title
+* Property reference
+* Property location
+* Rent or sale price
+* Security deposit
+* Agent commission
+* Other charges
+* Contract duration if rental
+* Property handover details
+
+## Agency Information
+
+* Agency name
+* Trade license number
+* RERA number if applicable
+* Company address
+* Company email
+* Company phone
+* Authorized representative
+* Agency logo
+* Default terms and conditions
+
+## Agent Information
+
+* Assigned agent name
+* Agent email
+* Agent phone
+* Agent license number if applicable
+* Agent commission
+
+The generated contract should be downloadable by the client.
+
+---
+
+# 18. Signed Contract Upload Workflow
+
+After the agent generates and sends the contract:
+
+1. Client downloads the contract.
+2. Client signs the contract.
+3. Client uploads the signed contract in their account.
+4. Agent receives a notification.
+5. Agent reviews the signed contract.
+6. Agent approves or rejects the uploaded contract.
+
+## Agent Review Options
+
+* Approve contract
+* Reject contract
+* Request re-upload
+* Add review notes
+
+If approved, the transaction moves to payment pending.
+
+---
+
+# 19. Payment Workflow
+
+After contract approval, the client should see a clear payment breakdown.
+
+## Payment Breakdown for Rental Properties
+
+* Rent amount
+* Security deposit
+* Agent commission
+* Admin fees
+* Ejari or registration fees if applicable
+* Other charges
+* VAT if applicable
+* Total payable amount
+
+## Payment Breakdown for Sale Properties
+
+* Sale price or booking amount
+* Agency commission
+* Deposit
+* Transfer-related charges if applicable
+* Other charges
+* VAT if applicable
+* Total payable amount
+
+The client should be able to pay through the existing payment workflow if already available in the ecommerce system.
+
+After payment:
+
+* Generate invoice
+* Notify agent
+* Notify admin
+* Update client dashboard
+* Update agent dashboard
+* Mark transaction as payment received or pending verification depending on payment method
+
+---
+
+# 20. Invoice Generation
+
+The system should generate an invoice after payment or after payment request creation.
+
+## Invoice Should Include
+
+* Invoice number
+* Client details
+* Property details
+* Agency details
+* Agent details
+* Payment breakdown
+* Total amount
+* Payment status
+* Date issued
+* Terms and conditions
+
+The invoice should be downloadable from the client account.
+
+---
+
+# 21. Handover Workflow
+
+After payment is approved, the agent should arrange property handover.
+
+## Handover Steps
+
+1. Payment approved
+2. Agent schedules handover
+3. Client receives handover details
+4. Agent marks handover as completed
+5. Transaction is marked as completed
+
+## Handover Details
+
+* Handover date
+* Handover time
+* Meeting location
+* Agent notes
+* Required documents
+* Key collection details
+* Move-in or possession instructions
+
+---
+
+# 22. Notification Requirements
+
+The system should notify the right users at each stage.
+
+## Notify Agent When
+
+* A client books a viewing
+* A client submits an inquiry
+* A client declares they want to proceed
+* A client requests a contract
+* A client uploads a signed contract
+* A client completes payment
+* A client asks for handover details
+
+## Notify Client When
+
+* Viewing is confirmed
+* Agent approves proceeding
+* Contract is generated
+* Contract upload is approved or rejected
+* Payment is requested
+* Payment is approved
+* Handover is scheduled
+* Transaction is completed
+
+## Notify Admin When
+
+* New property is created if needed
+* New transaction starts
+* Payment is completed
+* Contract is approved
+* Transaction is completed
+
+Notifications can be handled through:
+
+* In-app notifications
+* Email
+* WhatsApp link or integration where possible
+
+---
+
+# 23. Status System
+
+Each property transaction should have a clear status.
+
+## Suggested Transaction Statuses
+
+* Inquiry submitted
+* Viewing requested
+* Viewing scheduled
+* Viewing completed
+* Client proceeding
+* Agent approved
+* Contract requested
+* Contract generated
+* Contract sent
+* Signed contract uploaded
+* Contract under review
+* Contract approved
+* Payment pending
+* Payment completed
+* Handover pending
+* Handover scheduled
+* Handover completed
+* Transaction completed
+* Cancelled
+* Rejected
+
+---
+
+# 24. Role-Based Access
+
+The platform should support different dashboards and permissions.
+
+## Admin
+
+Can manage:
+
+* Agency information
+* Agents
+* Properties
+* Locations
+* Clients
+* Transactions
+* Contracts
+* Payments
+* Invoices
+* Settings
+
+## Agent
+
+Can manage:
+
+* Assigned properties
+* Assigned inquiries
+* Viewing requests
+* Client declarations
+* Contract requests
+* Contract generation
+* Contract review
+* Payment status
+* Handover arrangements
+
+## Client
+
+Can manage:
+
+* Account profile
+* Viewing requests
+* Property inquiries
+* Proceed / not proceed declaration
+* Contract download
+* Signed contract upload
+* Payment
+* Invoice download
+* Handover details
+
+---
+
+# 25. Recommended Database Entities
+
+The existing ecommerce schema should be adapted carefully rather than deleted unnecessarily.
+
+## Core Entities
+
+* properties
+* property_images
+* property_locations
+* property_amenities
+* agents
+* agency_settings
+* property_inquiries
+* viewing_requests
+* property_transactions
+* client_declarations
+* contract_requests
+* generated_contracts
+* uploaded_contracts
+* payment_breakdowns
+* invoices
+* handover_records
+* notifications
+
+## Reusable Ecommerce Entities
+
+Depending on the current system, the following may be repurposed:
+
+* products → properties
+* product_categories → property_types or property_categories
+* orders → property_transactions
+* order_items → transaction_charges or selected_property
+* customers → clients
+* checkout → payment workflow
+* invoices → invoices
+* admin users → admin / agents
+* product images → property images
+
+---
+
+# 26. Frontend Copy Direction
+
+All ecommerce copy should be changed into real estate copy.
+
+## Examples
+
+“Shop now” becomes:
+
+* View Properties
+* Book a Viewing
+* Rent Now
+* Buy Now
+
+“Products” becomes:
+
+* Properties
+* Listings
+* Available Properties
+
+“Cart” becomes:
+
+* Application
+* Payment Summary
+* Transaction Summary
+
+“Checkout” becomes:
+
+* Complete Payment
+* Secure Property
+* Proceed with Property
+
+“Order” becomes:
+
+* Property Transaction
+* Rental Application
+* Purchase Application
+
+---
+
+# 27. Image Direction
+
+Replace ecommerce product photography with real estate visuals.
+
+## Required Image Types
+
+* Property exterior images
+* Property interior images
+* Bedroom images
+* Living room images
+* Kitchen images
+* Bathroom images
+* Community images
+* Map and location visuals
+* Agent profile photos
+* Agency brand visuals
+
+The design should feel premium, trustworthy, clean, and conversion-focused.
+
+---
+
+# 28. Complete User Journey
+
+## Rental Journey
+
+1. Client views rental property.
+2. Client books a viewing.
+3. Assigned agent is notified.
+4. Agent confirms or manages viewing.
+5. Client views property.
+6. Client declares whether they want to proceed.
+7. Agent reviews and approves.
+8. Client requests contract.
+9. Agent generates contract.
+10. Client downloads, signs, and uploads contract.
+11. Agent reviews signed contract.
+12. Agent approves contract.
+13. Client pays rent, security deposit, commission, and other charges.
+14. Invoice is generated.
+15. Agent arranges handover.
+16. Client receives handover details.
+17. Agent marks handover complete.
+18. Transaction is completed.
+
+## Sale Journey
+
+1. Client views sale property.
+2. Client books a viewing.
+3. Assigned agent is notified.
+4. Agent confirms or manages viewing.
+5. Client views property.
+6. Client declares whether they want to proceed.
+7. Agent reviews and approves.
+8. Client requests contract or purchase agreement.
+9. Agent generates contract.
+10. Client downloads, signs, and uploads contract.
+11. Agent reviews signed contract.
+12. Agent approves contract.
+13. Client pays required deposit, commission, and other charges.
+14. Invoice is generated.
+15. Agent arranges next steps for sale completion or handover.
+16. Transaction is completed or moved to external legal/transfer process.
+
+---
+
+# 29. Development Instruction
+
+Do not rebuild the platform from scratch.
+
+Use the existing ecommerce codebase, workflows, authentication, admin structure, database schema, seeded data, payment logic, invoice logic, and user account system as the foundation.
+
+Refactor the system into a real estate platform by renaming, extending, and adapting existing modules.
+
+The platform should feel like a complete real estate website, not an ecommerce site with changed labels.
+
+Every workflow must be clear, role-based, traceable, and visible to the correct user.
+
+The final platform should support property discovery, viewing bookings, agent-managed approvals, contract generation, signed contract review, payment, invoice generation, and handover completion.
+
+---
+
+# 30. Final Expected Outcome
+
+The completed system should allow a real estate agency to:
+
+* Add rental and sale properties
+* Assign agents to properties
+* Manage property locations and maps
+* Accept property inquiries
+* Accept viewing bookings
+* Track client interest after viewing
+* Generate contracts automatically
+* Let clients download, sign, and upload contracts
+* Review and approve signed contracts
+* Collect rent, deposits, commissions, and other charges
+* Generate invoices
+* Arrange handover
+* Manage the full transaction lifecycle from property discovery to completion
