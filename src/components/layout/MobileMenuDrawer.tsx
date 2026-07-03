@@ -66,7 +66,7 @@ export function MobileMenuDrawer({ open, onClose }: MobileMenuDrawerProps) {
 
   return (
     <div
-      className="mobile-menu-drawer fixed inset-0 z-[60] flex flex-col bg-content-bg lg:hidden"
+      className="mobile-menu-drawer fixed inset-0 z-[70] flex flex-col bg-content-bg lg:hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Navigation menu"

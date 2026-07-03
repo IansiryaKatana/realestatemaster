@@ -44,10 +44,11 @@ export function SiteHeader() {
   const header = (
     <header
       className={cn(
-        'site-header pointer-events-auto fixed inset-x-0 top-0 isolate z-50 bg-transparent px-6 text-cream-text shadow-none transition-[transform,background-color,box-shadow,padding] duration-300 ease-out motion-reduce:transition-none md:px-14',
+        'site-header pointer-events-auto fixed inset-x-0 top-0 isolate z-50 bg-transparent px-6 text-cream-text shadow-none transition-[transform,background-color,box-shadow,padding,visibility] duration-300 ease-out motion-reduce:transition-none md:px-14',
         atTop ? 'py-4 md:py-5' : 'py-3',
         showSolidBar && 'bg-hero-brown shadow-md border-b border-white/10',
         !atTop && !revealed && '-translate-y-full pointer-events-none',
+        mobileOpen && 'max-lg:invisible max-lg:pointer-events-none',
       )}
     >
         <div className="flex h-10 items-center justify-between gap-4 md:h-auto">
@@ -128,7 +129,14 @@ export function SiteHeader() {
     <>
       {typeof document !== 'undefined' ? createPortal(header, document.body) : header}
 
-      <MobileMenuDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      {typeof document !== 'undefined' ? (
+        createPortal(
+          <MobileMenuDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />,
+          document.body,
+        )
+      ) : (
+        <MobileMenuDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      )}
     </>
   )
 }
