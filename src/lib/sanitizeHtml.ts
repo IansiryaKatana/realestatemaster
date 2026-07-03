@@ -1,11 +1,6 @@
 import { sanitizeMarketingHtml as sanitizeBrowser } from './sanitizeHtml.browser'
+import { sanitizeMarketingHtml as sanitizeServer } from './sanitizeHtml.server'
 
 export function sanitizeMarketingHtml(html: string): string {
-  if (import.meta.env.SSR) {
-    const { sanitizeMarketingHtml: sanitizeServer } =
-      require('./sanitizeHtml.server') as typeof import('./sanitizeHtml.server')
-    return sanitizeServer(html)
-  }
-
-  return sanitizeBrowser(html)
+  return import.meta.env.SSR ? sanitizeServer(html) : sanitizeBrowser(html)
 }

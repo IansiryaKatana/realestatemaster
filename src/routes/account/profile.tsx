@@ -1,22 +1,41 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useStorefrontAuth } from '@/contexts/StorefrontAuthContext'
 import { fetchClientProfile, upsertClientProfile } from '@/lib/property/propertyTransactionQueries'
+import { profileSchema, type ProfileFormValues } from '@/lib/validators/profile.schema'
 import { PageHero } from '@/components/layout/PageHero'
 import { StorefrontLayout } from '@/components/layout/StorefrontLayout'
 import { SectionContainer } from '@/components/layout/SectionContainer'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { PhoneInputField } from '@/components/ui/phone-input-field'
+import { FormNationalitySelect } from '@/components/ui/NationalitySelect'
+import { FormPhoneInput } from '@/components/ui/phone-input-field'
 import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/account/profile')({
   component: AccountProfilePage,
   head: () => ({ meta: [{ title: 'My Profile | GW Vacation Homes' }] }),
 })
+
+const EMPTY_PROFILE: ProfileFormValues = {
+  full_name: '',
+  phone: '',
+  address: '',
+  emirates_id: '',
+  passport_number: '',
+  nationality: '',
+}
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null
+  return <p className="mt-1 text-xs text-red-600">{message}</p>
+}
 
 function AccountProfilePage() {
   const { user, loading: authLoading } = useStorefrontAuth()
@@ -26,18 +45,21 @@ function AccountProfilePage() {
     enabled: Boolean(user),
   })
   const [saving, setSaving] = useState(false)
-  const [form, setForm] = useState({
-    full_name: '',
-    phone: '',
-    address: '',
-    emirates_id: '',
-    passport_number: '',
-    nationality: '',
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: EMPTY_PROFILE,
   })
 
   useEffect(() => {
     if (profile) {
-      setForm({
+      reset({
         full_name: profile.full_name ?? '',
         phone: profile.phone ?? '',
         address: profile.address ?? '',
@@ -46,12 +68,12 @@ function AccountProfilePage() {
         nationality: profile.nationality ?? '',
       })
     }
-  }, [profile])
+  }, [profile, reset])
 
-  async function save() {
+  async function onSubmit(values: ProfileFormValues) {
     setSaving(true)
     try {
-      await upsertClientProfile(form)
+      await upsertClientProfile(values)
       toast.success('Profile saved')
       void refetch()
     } catch (err) {
@@ -82,32 +104,84 @@ function AccountProfilePage() {
     )
   }
 
+  const invalidClass = (field: keyof ProfileFormValues) =>
+    cn(errors[field] && 'border-red-500 focus-visible:ring-red-500/30')
+
   return (
     <StorefrontLayout>
       <PageHero title="My profile" subtitle="Used for contracts and property applications" backTo="/account" backLabel="Back to account" />
       <SectionContainer className="max-w-2xl py-10">
-        <div className="grid gap-4">
-          {(['full_name', 'nationality', 'emirates_id', 'passport_number'] as const).map((key) => (
-            <div key={key}>
-              <label className="mb-1 block text-sm font-semibold capitalize">{key.replace(/_/g, ' ')}</label>
-              <Input value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} />
-            </div>
-          ))}
+        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
           <div>
-            <label className="mb-1 block text-sm font-semibold">Phone</label>
-            <PhoneInputField
-              id="profile-phone"
-              value={form.phone || undefined}
-              onChange={(value) => setForm((f) => ({ ...f, phone: value ?? '' }))}
-              variant="public"
+            <label className="mb-1 block text-sm font-semibold" htmlFor="profile-full-name">
+              Full name
+            </label>
+            <Input
+              id="profile-full-name"
+              placeholder="As on your ID or passport"
+              className={invalidClass('full_name')}
+              {...register('full_name')}
             />
+            <FieldError message={errors.full_name?.message} />
           </div>
+
           <div>
-            <label className="mb-1 block text-sm font-semibold">Address</label>
-            <Textarea rows={3} value={form.address} onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))} />
+            <label className="mb-1 block text-sm font-semibold">Nationality</label>
+            <FormNationalitySelect control={control} fieldName="nationality" />
+            <FieldError message={errors.nationality?.message} />
           </div>
-          <Button onClick={() => void save()} disabled={saving}>{saving ? 'Saving…' : 'Save profile'}</Button>
-        </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-semibold" htmlFor="profile-emirates-id">
+              Emirates ID
+            </label>
+            <Input
+              id="profile-emirates-id"
+              placeholder="784-1990-1234567-1"
+              className={invalidClass('emirates_id')}
+              {...register('emirates_id')}
+            />
+            <FieldError message={errors.emirates_id?.message} />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-semibold" htmlFor="profile-passport">
+              Passport number
+            </label>
+            <Input
+              id="profile-passport"
+              placeholder="e.g. N1234567"
+              className={invalidClass('passport_number')}
+              {...register('passport_number')}
+            />
+            <FieldError message={errors.passport_number?.message} />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-semibold" htmlFor="profile-phone">
+              Phone
+            </label>
+            <FormPhoneInput control={control} fieldName="phone" id="profile-phone" variant="public" />
+            <FieldError message={errors.phone?.message} />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-semibold" htmlFor="profile-address">
+              Address
+            </label>
+            <Textarea
+              id="profile-address"
+              rows={3}
+              className={invalidClass('address')}
+              {...register('address')}
+            />
+            <FieldError message={errors.address?.message} />
+          </div>
+
+          <Button type="submit" disabled={saving}>
+            {saving ? 'Saving…' : 'Save profile'}
+          </Button>
+        </form>
       </SectionContainer>
     </StorefrontLayout>
   )

@@ -14,7 +14,7 @@ const buttonVariants = cva(
         ghost: 'hover:bg-soft-beige/60 text-text-brown',
         destructive: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500/40',
         'destructive-ghost': 'text-red-600 hover:bg-red-50 hover:text-red-700',
-        cream: 'bg-[#f6f2e8] text-[#2b2117] hover:bg-[#f6f2e8]/90 rounded-full',
+        cream: 'bg-[#f6f2e8] text-[#2b2117] hover:bg-[#f6f2e8]/90',
         pill: 'bg-white text-[#2b2117] hover:bg-white/90 rounded-full',
       },
       size: {
