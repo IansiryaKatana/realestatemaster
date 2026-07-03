@@ -24,10 +24,14 @@ export function NotificationBell() {
   const unread = notifications.filter((n) => !n.is_read).length
 
   return (
-    <Link to={notificationsPath} aria-label="Notifications" className="relative rounded-full p-2 transition hover:bg-white/10">
-      <Bell className="h-4 w-4" />
+    <Link
+      to={notificationsPath}
+      aria-label={unread > 0 ? `Notifications (${unread} unread)` : 'Notifications'}
+      className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition hover:bg-white/10"
+    >
+      <Bell className="h-4 w-4" aria-hidden />
       {unread > 0 ? (
-        <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white px-1 text-[9px] font-bold text-text-brown">
+        <span className="pointer-events-none absolute right-0 top-0 flex h-4 min-w-4 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-white px-1 text-[9px] font-bold leading-none text-text-brown">
           {unread > 9 ? '9+' : unread}
         </span>
       ) : null}

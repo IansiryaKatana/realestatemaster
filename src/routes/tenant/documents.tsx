@@ -8,6 +8,17 @@ import { tryGetSupabase } from '@/integrations/supabase/client'
 import { FileUploadField } from '@/portals/components/FileUploadField'
 import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
 import { Button } from '@/components/ui/button'
+import { BrandedSelect } from '@/components/ui/BrandedSelect'
+
+const DOC_TYPE_OPTIONS = [
+  { value: 'ejari', label: 'Ejari' },
+  { value: 'dewa', label: 'DEWA' },
+  { value: 'lease', label: 'Lease' },
+  { value: 'id', label: 'ID' },
+  { value: 'other', label: 'Other' },
+]
+
+const portalSelectTriggerClass = '!w-full !min-w-0'
 
 export const Route = createFileRoute('/tenant/documents')({
   component: TenantDocumentsPage,
@@ -58,17 +69,14 @@ function TenantDocumentsPage() {
 
       <form onSubmit={(e) => void handleUpload(e)} className="space-y-4 rounded-xl border border-[#e8e0d4] bg-white p-5">
         <h2 className="font-semibold">Upload document</h2>
-        <select
-          className="w-full rounded-md border border-input px-3 py-2 text-sm"
+        <BrandedSelect
+          aria-label="Document type"
           value={docType}
-          onChange={(e) => setDocType(e.target.value)}
-        >
-          <option value="ejari">Ejari</option>
-          <option value="dewa">DEWA</option>
-          <option value="lease">Lease</option>
-          <option value="id">ID</option>
-          <option value="other">Other</option>
-        </select>
+          onValueChange={setDocType}
+          options={DOC_TYPE_OPTIONS}
+          variant="storefront"
+          triggerClassName={portalSelectTriggerClass}
+        />
         <FileUploadField
           label="Document file"
           value={fileUrl}

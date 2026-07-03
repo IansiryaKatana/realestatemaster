@@ -8,7 +8,17 @@ import { fetchServiceRequests, tenancyKeys } from '@/lib/tenancy/tenancyQueries'
 import { PortalStatusBadge } from '@/portals/components/PortalStatusBadge'
 import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
 import { Button } from '@/components/ui/button'
+import { BrandedSelect } from '@/components/ui/BrandedSelect'
 import { Input } from '@/components/ui/input'
+
+const PRIORITY_OPTIONS = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+  { value: 'urgent', label: 'Urgent' },
+]
+
+const portalSelectTriggerClass = '!w-full !min-w-0'
 
 export const Route = createFileRoute('/tenant/maintenance')({
   component: TenantMaintenancePage,
@@ -51,16 +61,14 @@ function TenantMaintenancePage() {
       <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 rounded-xl border border-[#e8e0d4] bg-white p-5">
         <h2 className="font-semibold">Request a repair</h2>
         <Input placeholder="Issue summary" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <select
-          className="w-full rounded-md border border-input px-3 py-2 text-sm"
+        <BrandedSelect
+          aria-label="Priority"
           value={priority}
-          onChange={(e) => setPriority(e.target.value)}
-        >
-          <option value="low">Low</option>
-          <option value="normal">Normal</option>
-          <option value="high">High</option>
-          <option value="urgent">Urgent</option>
-        </select>
+          onValueChange={setPriority}
+          options={PRIORITY_OPTIONS}
+          variant="storefront"
+          triggerClassName={portalSelectTriggerClass}
+        />
         <textarea
           className="min-h-24 w-full rounded-md border border-input px-3 py-2 text-sm"
           placeholder="Describe the issue and preferred access time"

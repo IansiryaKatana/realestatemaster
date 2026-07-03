@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchRoleNotifications, tenancyKeys } from '@/lib/tenancy/tenancyQueries'
 import { tryGetSupabase } from '@/integrations/supabase/client'
-import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
+import { PortalAccordionTableRow, PortalDataTable } from '@/portals/components/PortalDataTable'
 import { formatOrdinalShortDate } from '@/lib/utils'
 
 export const Route = createFileRoute('/tenant/notifications')({
@@ -30,24 +30,24 @@ function TenantNotificationsPage() {
         <p className="text-muted">Loading…</p>
       ) : (
         <PortalDataTable
+          responsive
           columns={[
             { key: 'title', label: 'Title' },
-            { key: 'body', label: 'Message' },
+            { key: 'body', label: 'Message', hideBelowMd: true },
             { key: 'date', label: 'Date' },
           ]}
           isEmpty={notifications.length === 0}
           emptyMessage="No notifications yet."
         >
           {notifications.map((n) => (
-            <PortalTableRow
+            <PortalAccordionTableRow
               key={n.id}
               className={n.is_read ? 'opacity-70' : undefined}
-              onClick={() => void markRead(n.id)}
-            >
-              <PortalTableCell className="font-medium">{n.title}</PortalTableCell>
-              <PortalTableCell className="max-w-md text-muted">{n.body}</PortalTableCell>
-              <PortalTableCell className="text-muted">{formatOrdinalShortDate(n.created_at)}</PortalTableCell>
-            </PortalTableRow>
+              title={n.title}
+              detail={n.body}
+              trailing={formatOrdinalShortDate(n.created_at)}
+              onRowClick={() => void markRead(n.id)}
+            />
           ))}
         </PortalDataTable>
       )}

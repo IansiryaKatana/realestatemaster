@@ -139,7 +139,7 @@ export function PortalShell({
             <Menu className="h-5 w-5" />
           </button>
           <p className="text-sm font-semibold">{portalTitle}</p>
-          <div className="w-9">{headerExtra}</div>
+          <div className="flex w-9 shrink-0 items-center justify-end">{headerExtra}</div>
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>

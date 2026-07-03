@@ -9,6 +9,7 @@ import { AdminClickableTableRow, AdminTableStopCell } from '@/admin/components/A
 import { AdminRowActions, adminTableActionsCellClass, adminTableActionsHeadClass } from '@/admin/components/AdminRowActions'
 import { EntityDetailSheet } from '@/admin/components/EntityDetailSheet'
 import { adminBtnPrimary, adminBtnSecondary, adminInput, adminLabel } from '@/admin/adminClassNames'
+import { BrandedSelect } from '@/components/ui/BrandedSelect'
 import { tryGetSupabase } from '@/integrations/supabase/client'
 import {
   fetchLeases,
@@ -659,10 +660,13 @@ function AdminLandlordsTab() {
         <div className="admin-card space-y-3 p-4">
           <h3 className="font-semibold">Generate owner statement</h3>
           <div className="grid gap-3 sm:grid-cols-3">
-            <select className={adminInput} value={statementOwnerId} onChange={(e) => setStatementOwnerId(e.target.value)}>
-              <option value="">Select landlord</option>
-              {owners.map((o) => <option key={o.id} value={o.id}>{o.full_name}</option>)}
-            </select>
+            <BrandedSelect
+              allowEmpty
+              emptyLabel="Select landlord"
+              value={statementOwnerId}
+              onValueChange={setStatementOwnerId}
+              options={owners.map((o) => ({ value: o.id, label: o.full_name }))}
+            />
             <input className={adminInput} type="date" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} />
             <input className={adminInput} type="date" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} />
           </div>

@@ -18,6 +18,7 @@ import { fetchPropertyLookups } from '@/lib/property/propertyLookups'
 import { AdminPropertyTransactions } from '@/admin/AdminPropertyTransactions'
 import { AdminInvoices } from '@/admin/AdminInvoices'
 import { PhoneInputField } from '@/components/ui/phone-input-field'
+import { BrandedSelect } from '@/components/ui/BrandedSelect'
 
 const TABS = [
   { id: 'agency', label: 'Agency' },
@@ -470,10 +471,14 @@ function AdminAgents() {
           </div>
           <div>
             <label className={adminLabel}>Commission type</label>
-            <select className={adminInput} value={form.default_commission_type} onChange={(e) => setForm((f) => ({ ...f, default_commission_type: e.target.value }))}>
-              <option value="percent">Percent</option>
-              <option value="fixed">Fixed</option>
-            </select>
+            <BrandedSelect
+              value={form.default_commission_type}
+              onValueChange={(default_commission_type) => setForm((f) => ({ ...f, default_commission_type }))}
+              options={[
+                { value: 'percent', label: 'Percent' },
+                { value: 'fixed', label: 'Fixed' },
+              ]}
+            />
           </div>
           <div>
             <label className={adminLabel}>Commission value</label>

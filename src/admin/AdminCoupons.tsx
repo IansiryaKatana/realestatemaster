@@ -9,6 +9,7 @@ import { AdminErrorBanner, AdminLoadingState } from '@/admin/components/AdminPag
 import { adminShowInitialLoading } from '@/admin/adminListLoading'
 import { AdminTabToolbar } from '@/admin/components/AdminTabToolbar'
 import { adminBtnPrimary, adminBtnSecondary, adminInput, adminLabel } from '@/admin/adminClassNames'
+import { BrandedSelect } from '@/components/ui/BrandedSelect'
 import { AdminRowActions, adminTableActionsCellClass, adminTableActionsHeadClass, crudRowActions } from '@/admin/components/AdminRowActions'
 
 type CouponRow = Database['public']['Tables']['coupons']['Row']
@@ -149,10 +150,14 @@ export function AdminCoupons() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2"><label className={adminLabel}>Code</label><input className={adminInput} value={form.code} onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))} /></div>
           <div className="space-y-2"><label className={adminLabel}>Type</label>
-            <select className={adminInput} value={form.discount_type} onChange={(e) => setForm((f) => ({ ...f, discount_type: e.target.value as 'percent' | 'fixed' }))}>
-              <option value="percent">Percent</option>
-              <option value="fixed">Fixed amount</option>
-            </select>
+            <BrandedSelect
+              value={form.discount_type}
+              onValueChange={(discount_type) => setForm((f) => ({ ...f, discount_type: discount_type as 'percent' | 'fixed' }))}
+              options={[
+                { value: 'percent', label: 'Percent' },
+                { value: 'fixed', label: 'Fixed amount' },
+              ]}
+            />
           </div>
           <div className="space-y-2"><label className={adminLabel}>Value</label><input className={adminInput} value={form.discount_value} onChange={(e) => setForm((f) => ({ ...f, discount_value: e.target.value }))} /></div>
           <div className="space-y-2"><label className={adminLabel}>Minimum amount</label><input className={adminInput} value={form.min_subtotal} onChange={(e) => setForm((f) => ({ ...f, min_subtotal: e.target.value }))} /></div>

@@ -8,7 +8,17 @@ import { fetchServiceRequests, tenancyKeys } from '@/lib/tenancy/tenancyQueries'
 import { PortalStatusBadge } from '@/portals/components/PortalStatusBadge'
 import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
 import { Button } from '@/components/ui/button'
+import { BrandedSelect } from '@/components/ui/BrandedSelect'
 import { Input } from '@/components/ui/input'
+
+const CATEGORY_OPTIONS = [
+  { value: 'general', label: 'General' },
+  { value: 'noise', label: 'Noise' },
+  { value: 'neighbour', label: 'Neighbour' },
+  { value: 'building', label: 'Building management' },
+]
+
+const portalSelectTriggerClass = '!w-full !min-w-0'
 
 export const Route = createFileRoute('/tenant/complaints')({
   component: TenantComplaintsPage,
@@ -51,16 +61,14 @@ function TenantComplaintsPage() {
       <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 rounded-xl border border-[#e8e0d4] bg-white p-5">
         <h2 className="font-semibold">File a complaint</h2>
         <Input placeholder="Subject" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <select
-          className="w-full rounded-md border border-input px-3 py-2 text-sm"
+        <BrandedSelect
+          aria-label="Category"
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
-          <option value="general">General</option>
-          <option value="noise">Noise</option>
-          <option value="neighbour">Neighbour</option>
-          <option value="building">Building management</option>
-        </select>
+          onValueChange={setCategory}
+          options={CATEGORY_OPTIONS}
+          variant="storefront"
+          triggerClassName={portalSelectTriggerClass}
+        />
         <textarea
           className="min-h-24 w-full rounded-md border border-input px-3 py-2 text-sm"
           placeholder="Describe the issue"
