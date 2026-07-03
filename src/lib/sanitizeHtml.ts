@@ -1,6 +1,28 @@
-import { sanitizeMarketingHtml as sanitizeBrowser } from './sanitizeHtml.browser'
-import { sanitizeMarketingHtml as sanitizeServer } from './sanitizeHtml.server'
+import sanitizeHtml from 'sanitize-html'
+
+const ALLOWED_TAGS = [
+  'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'a', 'blockquote', 'hr', 'span', 'div',
+]
 
 export function sanitizeMarketingHtml(html: string): string {
-  return import.meta.env.SSR ? sanitizeServer(html) : sanitizeBrowser(html)
+  if (!html.trim()) return ''
+
+  return sanitizeHtml(html, {
+    allowedTags: ALLOWED_TAGS,
+    allowedAttributes: {
+      a: ['href', 'title', 'target', 'rel', 'class'],
+      '*': ['class'],
+      p: ['class'],
+      div: ['class'],
+      span: ['class'],
+      h1: ['class'],
+      h2: ['class'],
+      h3: ['class'],
+      h4: ['class'],
+      ul: ['class'],
+      ol: ['class'],
+      li: ['class'],
+      blockquote: ['class'],
+    },
+  })
 }
