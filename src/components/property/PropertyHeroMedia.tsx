@@ -121,8 +121,8 @@ export function PropertyHeroMedia({
       ) : null}
 
       {showDetails ? (
-        <TabsContent value="details" className="h-full md:hidden focus-visible:outline-none">
-          <div className="h-full overflow-y-auto pt-14">{mobileDetails}</div>
+        <TabsContent value="details" className="h-full bg-white md:hidden focus-visible:outline-none">
+          <div className="h-full overflow-y-auto px-5 pb-5 pt-[4.25rem]">{mobileDetails}</div>
         </TabsContent>
       ) : null}
     </Tabs>

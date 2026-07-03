@@ -51,7 +51,7 @@ export function ProductBuyBox({
   return (
     <div className={cn('rounded-2xl bg-white p-5 text-text-brown shadow-2xl md:p-7', className)}>
       {(parentCategoryName && parentCategorySlug) || (categoryName && categorySlug) ? (
-        <nav className="mb-3 text-xs text-muted" aria-label="Breadcrumb">
+        <nav className="mb-2 text-xs text-muted md:mb-3" aria-label="Breadcrumb">
           {parentCategoryName && parentCategorySlug ? (
             <>
               <CmsLink href={`/collection/${parentCategorySlug}`} className="transition hover:text-cta-brown">
@@ -71,7 +71,7 @@ export function ProductBuyBox({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-2xl font-extrabold leading-tight md:text-3xl">{product.name}</h1>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="mt-2.5 flex flex-wrap items-center gap-2 md:mt-3 md:gap-3">
             {isProperty ? (
               <PropertyPriceDisplay
                 product={{ ...product, price: displayPrice, compareAtPrice: displayCompareAt }}
@@ -86,7 +86,7 @@ export function ProductBuyBox({
             )}
           </div>
           {product.reviews && product.reviews.count > 0 ? (
-            <div className="mt-2 flex items-center gap-2 text-sm text-muted">
+            <div className="mt-1.5 flex items-center gap-2 text-sm text-muted md:mt-2">
               <div className="flex items-center gap-0.5">
                 {Array.from({ length: 5 }, (_, i) => (
                   <Star
@@ -105,19 +105,38 @@ export function ProductBuyBox({
               </span>
             </div>
           ) : null}
+          {isProperty ? (
+            <div className="mt-2 flex flex-col gap-2">
+              <PropertyStats product={product} areaName={meta?.areaName} className="gap-1" />
+              {product.propertyReference ? (
+                <p className="text-xs text-muted">Ref: {product.propertyReference}</p>
+              ) : null}
+              {meta?.propertyTypeName ? (
+                <p className="text-sm font-medium text-muted">{meta.propertyTypeName}</p>
+              ) : null}
+              {listingLabel || meta?.furnishingName || meta?.statusName ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {listingLabel ? <Badge className="hidden md:inline-flex">{listingLabel}</Badge> : null}
+                  {meta?.furnishingName ? <Badge>{meta.furnishingName}</Badge> : null}
+                  {meta?.statusName ? <Badge>{meta.statusName}</Badge> : null}
+                </div>
+              ) : null}
+              {meta?.agentName ? (
+                <p className="text-sm text-muted">
+                  Assigned agent: <span className="font-semibold text-text-brown">{meta.agentName}</span>
+                </p>
+              ) : null}
+            </div>
+          ) : null}
         </div>
         <WishlistButton productId={product.id} />
       </div>
 
-      {meta?.propertyTypeName ? (
+      {!isProperty && meta?.propertyTypeName ? (
         <p className="mt-2 text-sm font-medium text-muted">{meta.propertyTypeName}</p>
       ) : null}
 
-      {isProperty ? (
-        <PropertyStats product={product} areaName={meta?.areaName} className="mt-4" />
-      ) : null}
-
-      {listingLabel || meta?.furnishingName || meta?.statusName ? (
+      {!isProperty && (listingLabel || meta?.furnishingName || meta?.statusName) ? (
         <div className="mt-3 flex flex-wrap gap-2">
           {listingLabel ? <Badge className="hidden md:inline-flex">{listingLabel}</Badge> : null}
           {meta?.furnishingName ? <Badge>{meta.furnishingName}</Badge> : null}
@@ -125,20 +144,22 @@ export function ProductBuyBox({
         </div>
       ) : null}
 
-      {meta?.agentName ? (
+      {!isProperty && meta?.agentName ? (
         <p className="mt-3 text-sm text-muted">
           Assigned agent: <span className="font-semibold text-text-brown">{meta.agentName}</span>
         </p>
       ) : null}
 
-      {product.propertyReference ? (
-        <p className="mt-2 text-xs text-muted">Ref: {product.propertyReference}</p>
-      ) : null}
-
       {!isProperty && displaySku ? <p className="mt-2 text-xs text-muted">SKU: {displaySku}</p> : null}
 
       {product.description?.trim() ? (
-        <RichTextContent html={product.description} className="mt-4 line-clamp-4 text-sm text-muted" />
+        <RichTextContent
+          html={product.description}
+          className={cn(
+            'line-clamp-4 text-sm text-muted prose-p:my-0',
+            isProperty ? 'mt-2.5' : 'mt-4',
+          )}
+        />
       ) : null}
 
       {product.variants && product.variants.length > 0 && !isProperty ? (
@@ -150,7 +171,7 @@ export function ProductBuyBox({
       ) : null}
 
       {isProperty ? (
-        <PropertyActionButtons product={product} className="mt-6 flex flex-col gap-2 sm:flex-row" />
+        <PropertyActionButtons product={product} className="mt-3 flex flex-col gap-2 sm:mt-6 sm:flex-row" />
       ) : (
         <>
           <p className="mt-4 text-xs text-muted">{displayInventory} in stock</p>

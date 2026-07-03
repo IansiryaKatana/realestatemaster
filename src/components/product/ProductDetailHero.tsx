@@ -60,22 +60,20 @@ export function ProductDetailHero({
   )
 
   const mobileBuyBox = isProperty ? (
-    <div className="h-full overflow-y-auto bg-white px-5 pb-5">
-      <ProductBuyBox
-        product={product}
-        activeVariant={activeVariant}
-        displayPrice={displayPrice}
-        displayCompareAt={displayCompareAt}
-        displaySku={displaySku}
-        displayInventory={displayInventory}
-        categoryName={categoryName}
-        categorySlug={categorySlug}
-        parentCategoryName={parentCategoryName}
-        parentCategorySlug={parentCategorySlug}
-        onVariantSelect={onVariantSelect}
-        className="rounded-none p-0 shadow-none"
-      />
-    </div>
+    <ProductBuyBox
+      product={product}
+      activeVariant={activeVariant}
+      displayPrice={displayPrice}
+      displayCompareAt={displayCompareAt}
+      displaySku={displaySku}
+      displayInventory={displayInventory}
+      categoryName={categoryName}
+      categorySlug={categorySlug}
+      parentCategoryName={parentCategoryName}
+      parentCategorySlug={parentCategorySlug}
+      onVariantSelect={onVariantSelect}
+      className="rounded-none p-0 shadow-none"
+    />
   ) : undefined
 
   return (
