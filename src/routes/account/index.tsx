@@ -3,26 +3,23 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
-import { Loader2, Building2, Bell, Calendar, FileText, Heart } from 'lucide-react'
+import { Loader2, Building2, Bell, Calendar, FileText } from 'lucide-react'
 import { z } from 'zod'
 import { useStorefrontAuth } from '@/contexts/StorefrontAuthContext'
 import { useAgentAuth } from '@/contexts/AgentAuthContext'
 import { useTenantAuth } from '@/contexts/TenantAuthContext'
 import { useLandlordAuth } from '@/contexts/LandlordAuthContext'
-import { PortalRoleSwitcher } from '@/portals/components/PortalRoleSwitcher'
-import { useCustomerOrders } from '@/lib/storefront/storefrontQueries'
 import { useClientTransactions } from '@/lib/property/propertyTransactionQueries'
 import { useWishlistProducts } from '@/lib/hooks/useWishlist'
 import { getAccountTitle } from '@/lib/accountDisplayName'
 import { AccountWishlistSection } from '@/components/account/AccountWishlistSection'
-import { OrderHistoryTable } from '@/components/account/OrderHistoryTable'
 import { PageHero } from '@/components/layout/PageHero'
 import { StorefrontLayout } from '@/components/layout/StorefrontLayout'
 import { SectionContainer } from '@/components/layout/SectionContainer'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-export const Route = createFileRoute('/account')({
+export const Route = createFileRoute('/account/')({
   component: AccountPage,
   head: () => ({ meta: [{ title: 'My Account | GW Vacation Homes' }] }),
 })
@@ -56,7 +53,6 @@ function AccountPage() {
   const { isTenant } = useTenantAuth()
   const { isLandlord } = useLandlordAuth()
   const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>('signin')
-  const { data: orders = [], isLoading: ordersLoading } = useCustomerOrders(Boolean(user))
   const { data: transactions = [], isLoading: transactionsLoading } = useClientTransactions(Boolean(user))
   const { data: wishlistProducts = [], isLoading: wishlistLoading } = useWishlistProducts()
   const accountTitle = user ? getAccountTitle(user) : 'My Account'
@@ -126,9 +122,8 @@ function AccountPage() {
           ) : null}
 
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-            <h2 className="font-display text-2xl font-extrabold">Client dashboard</h2>
+            <h2 className="font-display text-2xl font-extrabold">My account</h2>
             <div className="flex flex-wrap items-center gap-2">
-              <PortalRoleSwitcher />
               {isLandlord ? (
                 <Button asChild variant="outline">
                   <Link to="/owner">Owner portal</Link>
@@ -148,7 +143,6 @@ function AccountPage() {
           <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <AccountHubCard to="/account/transactions" title="My applications" description={`${transactions.length} active property applications`} icon={Building2} />
             <AccountHubCard to="/account/viewings" title="Viewing requests" description="Schedule and track property viewings" icon={Calendar} />
-            <AccountHubCard to="/account" title="Saved properties" description="Favourite listings you've saved" icon={Heart} />
             <AccountHubCard to="/account/profile" title="My profile" description="Emirates ID, passport, and contact details for contracts" icon={FileText} />
             <AccountHubCard to="/account/notifications" title="Notifications" description="Viewing updates, contracts, and payment alerts" icon={Bell} />
           </div>
@@ -156,7 +150,8 @@ function AccountPage() {
           <h2 className="mb-6 font-display text-2xl font-extrabold">Saved properties</h2>
           <AccountWishlistSection products={wishlistProducts} isLoading={wishlistLoading} />
 
-          <h2 className="mb-6 mt-10 font-display text-2xl font-extrabold">Property applications</h2>
+          <h2 className="mb-2 mt-10 font-display text-2xl font-extrabold">Property applications</h2>
+          <p className="mb-6 text-sm text-muted">Track viewings, contracts, payments, and handover for each property.</p>
           {transactionsLoading ? (
             <p className="text-muted">Loading applications…</p>
           ) : transactions.length === 0 ? (
@@ -181,15 +176,6 @@ function AccountPage() {
                 </Button>
               ) : null}
             </div>
-          )}
-
-          <h2 className="mb-6 mt-10 font-display text-2xl font-extrabold">Order history</h2>
-          {ordersLoading ? (
-            <p className="text-muted">Loading orders…</p>
-          ) : orders.length === 0 ? (
-            <p className="text-sm text-muted">No ecommerce orders for this account.</p>
-          ) : (
-            <OrderHistoryTable orders={orders} />
           )}
         </SectionContainer>
       </StorefrontLayout>

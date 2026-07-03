@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { useCms } from '@/contexts/CmsContext'
 import { ContactPage } from '@/components/pages/ContactPage'
+import { FaqPage } from '@/components/pages/FaqPage'
 import { PageHero } from '@/components/layout/PageHero'
 import { SectionContainer } from '@/components/layout/SectionContainer'
 import { StorefrontLayout } from '@/components/layout/StorefrontLayout'
@@ -25,6 +26,10 @@ function MarketingPage() {
 
   if (slug === 'contact') {
     return <ContactPage page={page} />
+  }
+
+  if (slug === 'faq') {
+    return <FaqPage page={page} />
   }
 
   const safeHtml = page.bodyHtml ? sanitizeMarketingHtml(page.bodyHtml) : ''

@@ -181,7 +181,7 @@ export type NavLink = {
   id: string
   label: string
   href: string
-  location: 'header' | 'footer_categories' | 'footer_legal' | 'footer_help'
+  location: 'header' | 'footer_categories' | 'footer_legal' | 'footer_help' | 'footer_company' | 'footer_resources' | 'footer_account'
   sortOrder: number
   isActive: boolean
 }
@@ -311,11 +311,24 @@ export const staticCmsSnapshot: CmsSnapshot = {
     { id: '6', label: 'Holiday Rentals', href: '/collection/rentals', location: 'footer_categories', sortOrder: 0, isActive: true },
     { id: '7', label: 'Properties for Sale', href: '/collection/sales', location: 'footer_categories', sortOrder: 1, isActive: true },
     { id: '12', label: 'New Listings', href: '/collection/new', location: 'footer_categories', sortOrder: 2, isActive: true },
+    { id: '16', label: 'All Listings', href: '/collection/all', location: 'footer_categories', sortOrder: 3, isActive: true },
+    { id: '17', label: 'Search Properties', href: '/search', location: 'footer_categories', sortOrder: 4, isActive: true },
+    { id: '18', label: 'Featured Homes', href: '/collection/deals', location: 'footer_categories', sortOrder: 5, isActive: true },
+    { id: '20', label: 'About Us', href: '/pages/about', location: 'footer_company', sortOrder: 0, isActive: true },
+    { id: '21', label: 'How It Works', href: '/pages/how-it-works', location: 'footer_company', sortOrder: 1, isActive: true },
+    { id: '10', label: 'Contact', href: '/pages/contact', location: 'footer_company', sortOrder: 2, isActive: true },
+    { id: '22', label: 'FAQs', href: '/pages/faq', location: 'footer_resources', sortOrder: 0, isActive: true },
+    { id: '23', label: 'Renting Guide', href: '/pages/renting-guide', location: 'footer_resources', sortOrder: 1, isActive: true },
+    { id: '24', label: 'Buying Guide', href: '/pages/buying-guide', location: 'footer_resources', sortOrder: 2, isActive: true },
+    { id: '11', label: 'Handover Information', href: '/pages/shipping', location: 'footer_resources', sortOrder: 3, isActive: true },
+    { id: '25', label: 'My Account', href: '/account', location: 'footer_account', sortOrder: 0, isActive: true },
+    { id: '26', label: 'Property Applications', href: '/account/transactions', location: 'footer_account', sortOrder: 1, isActive: true },
+    { id: '27', label: 'Viewing Requests', href: '/account/viewings', location: 'footer_account', sortOrder: 2, isActive: true },
+    { id: '28', label: 'My Profile', href: '/account/profile', location: 'footer_account', sortOrder: 3, isActive: true },
+    { id: '29', label: 'Notifications', href: '/account/notifications', location: 'footer_account', sortOrder: 4, isActive: true },
     { id: '8', label: 'Privacy Policy', href: '/pages/privacy', location: 'footer_legal', sortOrder: 0, isActive: true },
     { id: '9', label: 'Terms', href: '/pages/terms', location: 'footer_legal', sortOrder: 1, isActive: true },
     { id: '13', label: 'Cookie Policy', href: '/pages/cookies', location: 'footer_legal', sortOrder: 2, isActive: true },
-    { id: '10', label: 'Contact', href: '/pages/contact', location: 'footer_help', sortOrder: 0, isActive: true },
-    { id: '11', label: 'Handover Information', href: '/pages/shipping', location: 'footer_help', sortOrder: 1, isActive: true },
   ],
   socialLinks: [],
   categories: [
@@ -527,6 +540,11 @@ export const staticCmsSnapshot: CmsSnapshot = {
     { id: 'mp3', title: LEGAL_PAGES.contact.title, slug: LEGAL_PAGES.contact.slug, bodyHtml: LEGAL_PAGES.contact.bodyHtml, metaDescription: LEGAL_PAGES.contact.metaDescription, published: true, sortOrder: 2 },
     { id: 'mp4', title: LEGAL_PAGES.shipping.title, slug: LEGAL_PAGES.shipping.slug, bodyHtml: LEGAL_PAGES.shipping.bodyHtml, metaDescription: LEGAL_PAGES.shipping.metaDescription, published: true, sortOrder: 3 },
     { id: 'mp5', title: LEGAL_PAGES.cookies.title, slug: LEGAL_PAGES.cookies.slug, bodyHtml: LEGAL_PAGES.cookies.bodyHtml, metaDescription: LEGAL_PAGES.cookies.metaDescription, published: true, sortOrder: 4 },
+    { id: 'mp6', title: LEGAL_PAGES.about.title, slug: LEGAL_PAGES.about.slug, bodyHtml: LEGAL_PAGES.about.bodyHtml, metaDescription: LEGAL_PAGES.about.metaDescription, published: true, sortOrder: 5 },
+    { id: 'mp7', title: LEGAL_PAGES.faq.title, slug: LEGAL_PAGES.faq.slug, bodyHtml: LEGAL_PAGES.faq.bodyHtml, metaDescription: LEGAL_PAGES.faq.metaDescription, published: true, sortOrder: 6 },
+    { id: 'mp8', title: LEGAL_PAGES.howItWorks.title, slug: LEGAL_PAGES.howItWorks.slug, bodyHtml: LEGAL_PAGES.howItWorks.bodyHtml, metaDescription: LEGAL_PAGES.howItWorks.metaDescription, published: true, sortOrder: 7 },
+    { id: 'mp9', title: LEGAL_PAGES.rentingGuide.title, slug: LEGAL_PAGES.rentingGuide.slug, bodyHtml: LEGAL_PAGES.rentingGuide.bodyHtml, metaDescription: LEGAL_PAGES.rentingGuide.metaDescription, published: true, sortOrder: 8 },
+    { id: 'mp10', title: LEGAL_PAGES.buyingGuide.title, slug: LEGAL_PAGES.buyingGuide.slug, bodyHtml: LEGAL_PAGES.buyingGuide.bodyHtml, metaDescription: LEGAL_PAGES.buyingGuide.metaDescription, published: true, sortOrder: 9 },
   ],
   products: [
     { id: 'p1', name: 'Corsair RM850x PSU', slug: 'corsair-rm850x-psu', description: '80 Plus Gold modular power supply with quiet fan and full protection suite.', price: 129.99, imageUrl: IMG.p1, categoryId: CAT.powerSupply, collectionId: COL.new, badge: 'New', isFeatured: true, isNew: true, isSummer: false, inventoryCount: 18, published: true, sortOrder: 0 },

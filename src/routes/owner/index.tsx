@@ -4,7 +4,6 @@ import { useLandlordAuth } from '@/contexts/LandlordAuthContext'
 import { fetchLandlordPortfolio, fetchLandlordStatements, tenancyKeys } from '@/lib/tenancy/tenancyQueries'
 import { PortalStatCard } from '@/portals/components/PortalStatCard'
 import { useFormatPrice } from '@/lib/currency'
-import { PortalRoleSwitcher } from '@/portals/components/PortalRoleSwitcher'
 
 export const Route = createFileRoute('/owner/')({
   component: OwnerDashboardPage,
@@ -31,12 +30,9 @@ function OwnerDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-extrabold text-text-brown">Portfolio overview</h1>
-          <p className="mt-1 text-sm text-muted">Welcome, {owner?.full_name}</p>
-        </div>
-        <PortalRoleSwitcher />
+      <div>
+        <h1 className="font-display text-3xl font-extrabold text-text-brown">Portfolio overview</h1>
+        <p className="mt-1 text-sm text-muted">Welcome, {owner?.full_name}</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">

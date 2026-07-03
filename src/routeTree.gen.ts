@@ -12,17 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
-import { Route as AccountRouteImport } from './routes/account'
 import { Route as TenantRouteRouteImport } from './routes/tenant/route'
 import { Route as OwnerRouteRouteImport } from './routes/owner/route'
 import { Route as AgentRouteRouteImport } from './routes/agent/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
+import { Route as AccountRouteRouteImport } from './routes/account/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TenantIndexRouteImport } from './routes/tenant/index'
 import { Route as OwnerIndexRouteImport } from './routes/owner/index'
 import { Route as BundlesIndexRouteImport } from './routes/bundles/index'
 import { Route as AgentIndexRouteImport } from './routes/agent/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AccountIndexRouteImport } from './routes/account/index'
 import { Route as TenantRentRouteImport } from './routes/tenant/rent'
 import { Route as TenantNotificationsRouteImport } from './routes/tenant/notifications'
 import { Route as TenantMoveInRouteImport } from './routes/tenant/move-in'
@@ -94,11 +95,6 @@ const CartRoute = CartRouteImport.update({
   path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AccountRoute = AccountRouteImport.update({
-  id: '/account',
-  path: '/account',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TenantRouteRoute = TenantRouteRouteImport.update({
   id: '/tenant',
   path: '/tenant',
@@ -117,6 +113,11 @@ const AgentRouteRoute = AgentRouteRouteImport.update({
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRouteRoute = AccountRouteRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -148,6 +149,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const AccountIndexRoute = AccountIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AccountRouteRoute,
 } as any)
 const TenantRentRoute = TenantRentRouteImport.update({
   id: '/rent',
@@ -387,12 +393,12 @@ const AdminCatalogRoute = AdminCatalogRouteImport.update({
 const AccountProfileRoute = AccountProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => AccountRoute,
+  getParentRoute: () => AccountRouteRoute,
 } as any)
 const AccountNotificationsRoute = AccountNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
-  getParentRoute: () => AccountRoute,
+  getParentRoute: () => AccountRouteRoute,
 } as any)
 const AgentTransactionsIndexRoute = AgentTransactionsIndexRouteImport.update({
   id: '/transactions/',
@@ -402,13 +408,13 @@ const AgentTransactionsIndexRoute = AgentTransactionsIndexRouteImport.update({
 const AccountViewingsIndexRoute = AccountViewingsIndexRouteImport.update({
   id: '/viewings/',
   path: '/viewings/',
-  getParentRoute: () => AccountRoute,
+  getParentRoute: () => AccountRouteRoute,
 } as any)
 const AccountTransactionsIndexRoute =
   AccountTransactionsIndexRouteImport.update({
     id: '/transactions/',
     path: '/transactions/',
-    getParentRoute: () => AccountRoute,
+    getParentRoute: () => AccountRouteRoute,
   } as any)
 const AgentTransactionsTransactionIdRoute =
   AgentTransactionsTransactionIdRouteImport.update({
@@ -420,21 +426,21 @@ const AccountTransactionsTransactionIdRoute =
   AccountTransactionsTransactionIdRouteImport.update({
     id: '/transactions/$transactionId',
     path: '/transactions/$transactionId',
-    getParentRoute: () => AccountRoute,
+    getParentRoute: () => AccountRouteRoute,
   } as any)
 const AccountOrdersOrderIdRoute = AccountOrdersOrderIdRouteImport.update({
   id: '/orders/$orderId',
   path: '/orders/$orderId',
-  getParentRoute: () => AccountRoute,
+  getParentRoute: () => AccountRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRouteRouteWithChildren
   '/admin': typeof AdminRouteRouteWithChildren
   '/agent': typeof AgentRouteRouteWithChildren
   '/owner': typeof OwnerRouteRouteWithChildren
   '/tenant': typeof TenantRouteRouteWithChildren
-  '/account': typeof AccountRouteWithChildren
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRouteWithChildren
   '/search': typeof SearchRoute
@@ -487,6 +493,7 @@ export interface FileRoutesByFullPath {
   '/tenant/move-in': typeof TenantMoveInRoute
   '/tenant/notifications': typeof TenantNotificationsRoute
   '/tenant/rent': typeof TenantRentRoute
+  '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/agent/': typeof AgentIndexRoute
   '/bundles/': typeof BundlesIndexRoute
@@ -501,7 +508,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/account': typeof AccountRouteWithChildren
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRouteWithChildren
   '/search': typeof SearchRoute
@@ -554,6 +560,7 @@ export interface FileRoutesByTo {
   '/tenant/move-in': typeof TenantMoveInRoute
   '/tenant/notifications': typeof TenantNotificationsRoute
   '/tenant/rent': typeof TenantRentRoute
+  '/account': typeof AccountIndexRoute
   '/admin': typeof AdminIndexRoute
   '/agent': typeof AgentIndexRoute
   '/bundles': typeof BundlesIndexRoute
@@ -569,11 +576,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRouteRouteWithChildren
   '/admin': typeof AdminRouteRouteWithChildren
   '/agent': typeof AgentRouteRouteWithChildren
   '/owner': typeof OwnerRouteRouteWithChildren
   '/tenant': typeof TenantRouteRouteWithChildren
-  '/account': typeof AccountRouteWithChildren
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRouteWithChildren
   '/search': typeof SearchRoute
@@ -626,6 +633,7 @@ export interface FileRoutesById {
   '/tenant/move-in': typeof TenantMoveInRoute
   '/tenant/notifications': typeof TenantNotificationsRoute
   '/tenant/rent': typeof TenantRentRoute
+  '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/agent/': typeof AgentIndexRoute
   '/bundles/': typeof BundlesIndexRoute
@@ -642,11 +650,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/admin'
     | '/agent'
     | '/owner'
     | '/tenant'
-    | '/account'
     | '/cart'
     | '/checkout'
     | '/search'
@@ -699,6 +707,7 @@ export interface FileRouteTypes {
     | '/tenant/move-in'
     | '/tenant/notifications'
     | '/tenant/rent'
+    | '/account/'
     | '/admin/'
     | '/agent/'
     | '/bundles/'
@@ -713,7 +722,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/account'
     | '/cart'
     | '/checkout'
     | '/search'
@@ -766,6 +774,7 @@ export interface FileRouteTypes {
     | '/tenant/move-in'
     | '/tenant/notifications'
     | '/tenant/rent'
+    | '/account'
     | '/admin'
     | '/agent'
     | '/bundles'
@@ -780,11 +789,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/admin'
     | '/agent'
     | '/owner'
     | '/tenant'
-    | '/account'
     | '/cart'
     | '/checkout'
     | '/search'
@@ -837,6 +846,7 @@ export interface FileRouteTypes {
     | '/tenant/move-in'
     | '/tenant/notifications'
     | '/tenant/rent'
+    | '/account/'
     | '/admin/'
     | '/agent/'
     | '/bundles/'
@@ -852,11 +862,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRouteRoute: typeof AccountRouteRouteWithChildren
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AgentRouteRoute: typeof AgentRouteRouteWithChildren
   OwnerRouteRoute: typeof OwnerRouteRouteWithChildren
   TenantRouteRoute: typeof TenantRouteRouteWithChildren
-  AccountRoute: typeof AccountRouteWithChildren
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRouteWithChildren
   SearchRoute: typeof SearchRoute
@@ -891,13 +901,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/account': {
-      id: '/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AccountRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/tenant': {
       id: '/tenant'
       path: '/tenant'
@@ -924,6 +927,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -967,6 +977,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/account/': {
+      id: '/account/'
+      path: '/'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AccountIndexRouteImport
+      parentRoute: typeof AccountRouteRoute
     }
     '/tenant/rent': {
       id: '/tenant/rent'
@@ -1302,14 +1319,14 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/account/profile'
       preLoaderRoute: typeof AccountProfileRouteImport
-      parentRoute: typeof AccountRoute
+      parentRoute: typeof AccountRouteRoute
     }
     '/account/notifications': {
       id: '/account/notifications'
       path: '/notifications'
       fullPath: '/account/notifications'
       preLoaderRoute: typeof AccountNotificationsRouteImport
-      parentRoute: typeof AccountRoute
+      parentRoute: typeof AccountRouteRoute
     }
     '/agent/transactions/': {
       id: '/agent/transactions/'
@@ -1323,14 +1340,14 @@ declare module '@tanstack/react-router' {
       path: '/viewings'
       fullPath: '/account/viewings/'
       preLoaderRoute: typeof AccountViewingsIndexRouteImport
-      parentRoute: typeof AccountRoute
+      parentRoute: typeof AccountRouteRoute
     }
     '/account/transactions/': {
       id: '/account/transactions/'
       path: '/transactions'
       fullPath: '/account/transactions/'
       preLoaderRoute: typeof AccountTransactionsIndexRouteImport
-      parentRoute: typeof AccountRoute
+      parentRoute: typeof AccountRouteRoute
     }
     '/agent/transactions/$transactionId': {
       id: '/agent/transactions/$transactionId'
@@ -1344,17 +1361,41 @@ declare module '@tanstack/react-router' {
       path: '/transactions/$transactionId'
       fullPath: '/account/transactions/$transactionId'
       preLoaderRoute: typeof AccountTransactionsTransactionIdRouteImport
-      parentRoute: typeof AccountRoute
+      parentRoute: typeof AccountRouteRoute
     }
     '/account/orders/$orderId': {
       id: '/account/orders/$orderId'
       path: '/orders/$orderId'
       fullPath: '/account/orders/$orderId'
       preLoaderRoute: typeof AccountOrdersOrderIdRouteImport
-      parentRoute: typeof AccountRoute
+      parentRoute: typeof AccountRouteRoute
     }
   }
 }
+
+interface AccountRouteRouteChildren {
+  AccountNotificationsRoute: typeof AccountNotificationsRoute
+  AccountProfileRoute: typeof AccountProfileRoute
+  AccountIndexRoute: typeof AccountIndexRoute
+  AccountOrdersOrderIdRoute: typeof AccountOrdersOrderIdRoute
+  AccountTransactionsTransactionIdRoute: typeof AccountTransactionsTransactionIdRoute
+  AccountTransactionsIndexRoute: typeof AccountTransactionsIndexRoute
+  AccountViewingsIndexRoute: typeof AccountViewingsIndexRoute
+}
+
+const AccountRouteRouteChildren: AccountRouteRouteChildren = {
+  AccountNotificationsRoute: AccountNotificationsRoute,
+  AccountProfileRoute: AccountProfileRoute,
+  AccountIndexRoute: AccountIndexRoute,
+  AccountOrdersOrderIdRoute: AccountOrdersOrderIdRoute,
+  AccountTransactionsTransactionIdRoute: AccountTransactionsTransactionIdRoute,
+  AccountTransactionsIndexRoute: AccountTransactionsIndexRoute,
+  AccountViewingsIndexRoute: AccountViewingsIndexRoute,
+}
+
+const AccountRouteRouteWithChildren = AccountRouteRoute._addFileChildren(
+  AccountRouteRouteChildren,
+)
 
 interface AdminRouteRouteChildren {
   AdminCatalogRoute: typeof AdminCatalogRoute
@@ -1490,27 +1531,6 @@ const TenantRouteRouteWithChildren = TenantRouteRoute._addFileChildren(
   TenantRouteRouteChildren,
 )
 
-interface AccountRouteChildren {
-  AccountNotificationsRoute: typeof AccountNotificationsRoute
-  AccountProfileRoute: typeof AccountProfileRoute
-  AccountOrdersOrderIdRoute: typeof AccountOrdersOrderIdRoute
-  AccountTransactionsTransactionIdRoute: typeof AccountTransactionsTransactionIdRoute
-  AccountTransactionsIndexRoute: typeof AccountTransactionsIndexRoute
-  AccountViewingsIndexRoute: typeof AccountViewingsIndexRoute
-}
-
-const AccountRouteChildren: AccountRouteChildren = {
-  AccountNotificationsRoute: AccountNotificationsRoute,
-  AccountProfileRoute: AccountProfileRoute,
-  AccountOrdersOrderIdRoute: AccountOrdersOrderIdRoute,
-  AccountTransactionsTransactionIdRoute: AccountTransactionsTransactionIdRoute,
-  AccountTransactionsIndexRoute: AccountTransactionsIndexRoute,
-  AccountViewingsIndexRoute: AccountViewingsIndexRoute,
-}
-
-const AccountRouteWithChildren =
-  AccountRoute._addFileChildren(AccountRouteChildren)
-
 interface CheckoutRouteChildren {
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
 }
@@ -1525,11 +1545,11 @@ const CheckoutRouteWithChildren = CheckoutRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRouteRoute: AccountRouteRouteWithChildren,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AgentRouteRoute: AgentRouteRouteWithChildren,
   OwnerRouteRoute: OwnerRouteRouteWithChildren,
   TenantRouteRoute: TenantRouteRouteWithChildren,
-  AccountRoute: AccountRouteWithChildren,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRouteWithChildren,
   SearchRoute: SearchRoute,

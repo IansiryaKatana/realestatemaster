@@ -75,4 +75,76 @@ export const LEGAL_PAGES = {
     metaDescription: 'Get in touch with GW Vacation Homes for viewings, rentals, and sales.',
     bodyHtml: `<p>Questions about a listing, viewing availability, or an active application? Send us a message and our team will respond within one business day.</p>`,
   },
+  about: {
+    title: 'About Us',
+    slug: 'about',
+    metaDescription: 'Learn about GW Vacation Homes — Dubai real estate for vacation rentals and property sales.',
+    bodyHtml: `<h2>Who we are</h2>
+<p>GW Vacation Homes is a Dubai-based real estate agency specialising in premium vacation rentals and properties for sale. We help residents, investors, and visitors find the right home across Marina, Downtown, Palm Jumeirah, JVC, and beyond.</p>
+<h2>What we do</h2>
+<ul>
+<li>Curated holiday and long-term rental listings</li>
+<li>Investment and end-user sales with transparent agency fees</li>
+<li>Viewings, contracts, payments, and handover managed in one place</li>
+<li>Dedicated agents for every application from inquiry to key collection</li>
+</ul>
+<h2>Why clients choose us</h2>
+<p>Every listing is verified, every application is tracked in your account, and every step — from viewing to contract to payment — is handled with clear communication and RERA-aligned processes.</p>`,
+  },
+  faq: {
+    title: 'FAQs',
+    slug: 'faq',
+    metaDescription: '150+ expert answers on renting, buying, viewings, contracts, Ejari, DEWA, payments, and handover in Dubai.',
+    bodyHtml: `<p>Browse our comprehensive FAQ library — organised by topic with instant search. Every answer links to guides, listings, and your account tools.</p>`,
+  },
+  howItWorks: {
+    title: 'How It Works',
+    slug: 'how-it-works',
+    metaDescription: 'Step-by-step guide to finding, viewing, and securing a property with GW Vacation Homes.',
+    bodyHtml: `<h2>1. Discover</h2>
+<p>Browse rentals and sales by area, price, and property type. Save favourites to your account.</p>
+<h2>2. Inquire &amp; view</h2>
+<p>Submit an inquiry or book a viewing. Your agent schedules the visit and updates you at every stage.</p>
+<h2>3. Apply</h2>
+<p>After your viewing, declare if you wish to proceed. Your agent approves the next steps and prepares the contract.</p>
+<h2>4. Contract &amp; pay</h2>
+<p>Review, sign, and upload the contract. Once approved, pay via the breakdown and invoice in your account.</p>
+<h2>5. Handover</h2>
+<p>Collect keys on the agreed date. For rentals, Ejari and utilities are coordinated; for sales, DLD transfer is completed.</p>`,
+  },
+  rentingGuide: {
+    title: 'Renting Guide',
+    slug: 'renting-guide',
+    metaDescription: 'Guide to renting a property in Dubai with GW Vacation Homes.',
+    bodyHtml: `<h2>Before you apply</h2>
+<p>Prepare Emirates ID or passport, visa copy, and salary certificate or proof of income where required by the owner.</p>
+<h2>Typical costs</h2>
+<ul>
+<li>Annual rent (cheque plan as listed)</li>
+<li>Security deposit (usually 5–10% of annual rent)</li>
+<li>Agency commission (as disclosed on the listing)</li>
+<li>Ejari registration and admin fees</li>
+</ul>
+<h2>Timeline</h2>
+<p>From approved application to move-in usually takes 5–10 business days depending on contract signing and cheque clearance.</p>
+<h2>After move-in</h2>
+<p>Report maintenance within 48 hours. Your agent remains your contact for renewals and tenancy support.</p>`,
+  },
+  buyingGuide: {
+    title: 'Buying Guide',
+    slug: 'buying-guide',
+    metaDescription: 'Guide to purchasing property in Dubai with GW Vacation Homes.',
+    bodyHtml: `<h2>Who can buy</h2>
+<p>Freehold areas are open to UAE nationals and many international buyers. Your agent confirms eligibility for each listing.</p>
+<h2>Typical steps</h2>
+<ol>
+<li>View the property and submit your offer</li>
+<li>Pay booking deposit to secure the unit</li>
+<li>Sign the Sale &amp; Purchase Agreement (SPA)</li>
+<li>Complete DLD transfer and final payment</li>
+<li>Key handover and snagging (where applicable)</li>
+</ol>
+<h2>Fees to expect</h2>
+<p>Agency commission, DLD transfer fee (typically 4%), and NOC or developer charges where applicable. All amounts are itemised before payment.</p>`,
+  },
 } as const

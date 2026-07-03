@@ -29,9 +29,12 @@ const emptyForm = (): FormState => ({ label: '', href: '/', location: 'header', 
 
 const LOCATIONS: { value: Location; label: string }[] = [
   { value: 'header', label: 'Header' },
-  { value: 'footer_categories', label: 'Footer — Categories' },
+  { value: 'footer_categories', label: 'Footer — Browse' },
+  { value: 'footer_company', label: 'Footer — Company' },
+  { value: 'footer_resources', label: 'Footer — Guides & FAQs' },
+  { value: 'footer_account', label: 'Footer — My Account' },
   { value: 'footer_legal', label: 'Footer — Legal' },
-  { value: 'footer_help', label: 'Footer — Help' },
+  { value: 'footer_help', label: 'Footer — Help (legacy)' },
 ]
 
 export function AdminNavLinks() {
