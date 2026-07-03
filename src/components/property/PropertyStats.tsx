@@ -22,7 +22,7 @@ export function PropertyStats({ product, areaName, className, compact = false }:
         </p>
       ) : null}
       {stats.length > 0 ? (
-        <div className={cn('flex flex-wrap items-center gap-x-3 gap-y-1 text-text-brown', compact ? 'text-xs md:text-base' : 'text-sm')}>
+        <div className={cn('flex flex-wrap items-center gap-x-3 gap-y-1.5 text-text-brown', compact ? 'text-xs md:text-base' : 'text-sm')}>
           {product.bedrooms != null ? (
             <span className="inline-flex items-center gap-1">
               <BedDouble className="h-3.5 w-3.5 text-muted" />

@@ -75,20 +75,24 @@ export function ProductCard({ product }: { product: Product }) {
         />
       </div>
 
-      <div className="mt-4 space-y-2">
-        <div className="flex items-start justify-between gap-2">
-          {isProperty ? (
-            <PropertyPriceDisplay product={product} size="sm" showBadges={false} />
-          ) : (
-            <>
-              <ProductPrice price={product.price} compareAtPrice={product.compareAtPrice} size="sm" />
-              {product.badge && <Badge>{product.badge}</Badge>}
-            </>
-          )}
+      <div className="mt-4 flex flex-col gap-2.5">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-start justify-between gap-2">
+            {isProperty ? (
+              <PropertyPriceDisplay product={product} size="sm" showBadges={false} />
+            ) : (
+              <>
+                <ProductPrice price={product.price} compareAtPrice={product.compareAtPrice} size="sm" />
+                {product.badge && <Badge>{product.badge}</Badge>}
+              </>
+            )}
+          </div>
+          <Link to={isProperty ? '/property/$slug' : '/product/$slug'} params={{ slug: product.slug }}>
+            <h3 className="line-clamp-2 text-sm font-extrabold leading-snug text-text-brown md:text-xl">
+              {product.name}
+            </h3>
+          </Link>
         </div>
-        <Link to={isProperty ? '/property/$slug' : '/product/$slug'} params={{ slug: product.slug }}>
-          <h3 className="line-clamp-2 text-sm font-extrabold leading-snug text-text-brown md:text-xl">{product.name}</h3>
-        </Link>
         {isProperty ? (
           <PropertyStats product={product} compact />
         ) : overviewText ? (
