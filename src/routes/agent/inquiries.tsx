@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { tryGetSupabase } from '@/integrations/supabase/client'
 import { useAgentAuth } from '@/contexts/AgentAuthContext'
+import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
 
 export const Route = createFileRoute('/agent/inquiries')({
   component: AgentInquiriesPage,
@@ -26,20 +27,38 @@ function AgentInquiriesPage() {
   return (
     <div className="space-y-4">
       <h1 className="font-display text-2xl font-extrabold text-text-brown">Inquiries</h1>
-      {isLoading ? <p className="text-muted">Loading…</p> : (
-        <div className="space-y-3">
+      {isLoading ? (
+        <p className="text-muted">Loading…</p>
+      ) : (
+        <PortalDataTable
+          columns={[
+            { key: 'contact', label: 'Contact' },
+            { key: 'property', label: 'Property' },
+            { key: 'message', label: 'Message' },
+            { key: 'status', label: 'Status' },
+          ]}
+          isEmpty={inquiries.length === 0}
+          emptyMessage="No inquiries yet."
+          minWidth="720px"
+        >
           {inquiries.map((row) => {
             const property = row.products as { name?: string } | null
             return (
-              <article key={row.id} className="rounded-xl border border-[#e8e0d4] bg-white p-4">
-                <p className="font-semibold text-text-brown">{row.full_name} · {property?.name}</p>
-                <p className="text-sm text-muted">{row.email}{row.phone ? ` · ${row.phone}` : ''}</p>
-                {row.message ? <p className="mt-2 text-sm">{row.message}</p> : null}
-                <p className="mt-2 text-xs uppercase tracking-wide text-muted">{row.status}</p>
-              </article>
+              <PortalTableRow key={row.id}>
+                <PortalTableCell>
+                  <p className="font-semibold text-text-brown">{row.full_name}</p>
+                  <p className="text-sm text-muted">
+                    {row.email}
+                    {row.phone ? ` · ${row.phone}` : ''}
+                  </p>
+                </PortalTableCell>
+                <PortalTableCell>{property?.name ?? '—'}</PortalTableCell>
+                <PortalTableCell className="max-w-md text-sm">{row.message ?? '—'}</PortalTableCell>
+                <PortalTableCell className="text-xs uppercase tracking-wide text-muted">{row.status}</PortalTableCell>
+              </PortalTableRow>
             )
           })}
-        </div>
+        </PortalDataTable>
       )}
     </div>
   )

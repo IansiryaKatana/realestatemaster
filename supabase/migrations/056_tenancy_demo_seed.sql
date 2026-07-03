@@ -3,6 +3,32 @@
 --   • Replace ecommerce categories → run 058_real_estate_categories_and_reviews.sql
 --   • Seed property-centered reviews (tenancy/viewing/handover), not product/electronics copy
 
+create extension if not exists pgcrypto;
+
+-- Demo landlord/tenant user referenced by payment and tenancy seed rows
+insert into auth.users (
+  id, instance_id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at
+) values (
+  'e839333b-5e72-419e-90e6-e39e9c6ca557',
+  '00000000-0000-0000-0000-000000000000',
+  'authenticated', 'authenticated',
+  'hello@iankatana.com',
+  crypt('Demo123!', gen_salt('bf')),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{"first_name":"Demo"}'::jsonb,
+  now(), now()
+) on conflict (id) do nothing;
+
+insert into auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at) values (
+  'e839333b-5e72-419e-90e6-e39e9c6ca558',
+  'e839333b-5e72-419e-90e6-e39e9c6ca557',
+  'e839333b-5e72-419e-90e6-e39e9c6ca557',
+  '{"sub":"e839333b-5e72-419e-90e6-e39e9c6ca557","email":"hello@iankatana.com"}'::jsonb,
+  'email', now(), now(), now()
+) on conflict do nothing;
+
 -- ── Property owners (8) ─────────────────────────────────────────────────────
 insert into public.property_owners (id, auth_user_id, full_name, email, phone, company_name, tax_id, is_active) values
   ('b1111111-1111-1111-1111-111111111101', 'e839333b-5e72-419e-90e6-e39e9c6ca557', 'Khalid Al Maktoum', 'khalid.owner@gwvacation.example', '+971501000001', 'Al Maktoum Holdings', 'TRN-100001', true),

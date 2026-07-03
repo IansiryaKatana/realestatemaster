@@ -13,7 +13,6 @@ export type PortalNavItem = {
 
 type PortalShellProps = {
   portalTitle: string
-  portalSubtitle?: string
   userLabel?: string | null
   roleBadge?: string | null
   logoSrc?: string
@@ -32,7 +31,6 @@ function isPathActive(pathname: string, to: string, exact?: boolean) {
 
 export function PortalShell({
   portalTitle,
-  portalSubtitle = 'GW Vacation Homes',
   userLabel,
   roleBadge,
   logoSrc = '/images/greenwood-logo.png',
@@ -71,7 +69,13 @@ export function PortalShell({
     <div className="shrink-0 border-b border-white/10 px-4 py-5">
       <Link to={navItems[0]?.to ?? '/'} onClick={onClick} className="inline-flex flex-col gap-1">
         <img src={logoSrc} alt={logoAlt} className="h-9 w-auto max-w-[200px] object-contain object-left" />
-        <p className="text-xs uppercase tracking-widest text-white/60">{portalSubtitle}</p>
+      </Link>
+    </div>
+  )
+
+  const footer = (
+    <div className="shrink-0 border-t border-white/10 p-3">
+      <div className="mb-3 flex flex-col gap-1 px-3">
         <p className="text-sm font-semibold">{portalTitle}</p>
         {userLabel ? <p className="text-xs text-white/75">{userLabel}</p> : null}
         {roleBadge ? (
@@ -79,15 +83,10 @@ export function PortalShell({
             {roleBadge}
           </span>
         ) : null}
-      </Link>
-    </div>
-  )
-
-  const footer = (
-    <div className="shrink-0 border-t border-white/10 p-3">
+      </div>
       <button
         type="button"
-        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-white/10"
+        className="flex w-full items-center justify-start gap-2 rounded-lg bg-[#b42318] px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#9a1f15]"
         onClick={onSignOut}
       >
         <LogOut className="h-4 w-4" />

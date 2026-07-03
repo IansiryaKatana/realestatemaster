@@ -1,0 +1,123 @@
+{
+  "bucket": "cms-media",
+  "cmsMedia": [
+    {
+      "id": "b41048a5-8c3c-402e-bc4a-96b460c111cd",
+      "storagePath": "features/1782967962176-Green_Vacation_Homes_Real_Estate__16_.jpg",
+      "folder": "features",
+      "kind": "image",
+      "fileName": "Green Vacation Homes Real Estate (16).jpg",
+      "sourceUrl": "https://ugbbfcerjcncxtbqwauw.supabase.co/storage/v1/object/public/cms-media/features/1782967962176-Green_Vacation_Homes_Real_Estate__16_.jpg"
+    },
+    {
+      "id": "8f7013d5-0886-452d-8307-41d16f99858c",
+      "storagePath": "features/1782968021242-Green_Vacation_Homes_Real_Estate__14_.jpg",
+      "folder": "features",
+      "kind": "image",
+      "fileName": "Green Vacation Homes Real Estate (14).jpg",
+      "sourceUrl": "https://ugbbfcerjcncxtbqwauw.supabase.co/storage/v1/object/public/cms-media/features/1782968021242-Green_Vacation_Homes_Real_Estate__14_.jpg"
+    },
+    {
+      "id": "41bcaa68-9300-491d-be9f-0f9427163570",
+      "storagePath": "features/1782968065852-Green_Vacation_Homes_Real_Estate__9_.jpg",
+      "folder": "features",
+      "kind": "image",
+      "fileName": "Green Vacation Homes Real Estate (9).jpg",
+      "sourceUrl": "https://ugbbfcerjcncxtbqwauw.supabase.co/storage/v1/object/public/cms-media/features/1782968065852-Green_Vacation_Homes_Real_Estate__9_.jpg"
+    },
+    {
+      "id": "2f176d9c-48ba-42fd-b293-d6e380e2c54e",
+      "storagePath": "lifestyle/1782968229742-Green_Vacation_Homes_Real_Estate__13_.jpg",
+      "folder": "lifestyle",
+      "kind": "image",
+      "fileName": "Green Vacation Homes Real Estate (13).jpg",
+      "sourceUrl": "https://ugbbfcerjcncxtbqwauw.supabase.co/storage/v1/object/public/cms-media/lifestyle/1782968229742-Green_Vacation_Homes_Real_Estate__13_.jpg"
+    },
+    {
+      "id": "163cbf19-a2a7-4868-b7b3-caaebe7307eb",
+      "storagePath": "lifestyle/1782968290452-Green_Vacation_Homes_Real_Estate__11_.jpg",
+      "folder": "lifestyle",
+      "kind": "image",
+      "fileName": "Green Vacation Homes Real Estate (11).jpg",
+      "sourceUrl": "https://ugbbfcerjcncxtbqwauw.supabase.co/storage/v1/object/public/cms-media/lifestyle/1782968290452-Green_Vacation_Homes_Real_Estate__11_.jpg"
+    },
+    {
+      "id": "e98d76cb-e787-4ba7-9ba2-10652acb1db1",
+      "storagePath": "lifestyle/1782968363059-Green_Vacation_Homes_Real_Estate__15_.jpg",
+      "folder": "lifestyle",
+      "kind": "image",
+      "fileName": "Green Vacation Homes Real Estate (15).jpg",
+      "sourceUrl": "https://ugbbfcerjcncxtbqwauw.supabase.co/storage/v1/object/public/cms-media/lifestyle/1782968363059-Green_Vacation_Homes_Real_Estate__15_.jpg"
+    },
+    {
+      "id": "a69fed54-3afc-4766-a572-592d431620cd",
+      "storagePath": "agents/1782968835212-My_headshots__1_.png",
+      "folder": "agents",
+      "kind": "image",
+      "fileName": "My headshots (1).png",
+      "sourceUrl": "https://ugbbfcerjcncxtbqwauw.supabase.co/storage/v1/object/public/cms-media/agents/1782968835212-My_headshots__1_.png"
+    },
+    {
+      "id": "bd182500-eb63-4311-a6ce-4a90ff74dbb5",
+      "storagePath": "agents/1782968861479-My_headshots__3_.jpeg",
+      "folder": "agents",
+      "kind": "image",
+      "fileName": "My headshots (3).jpeg",
+      "sourceUrl": "https://ugbbfcerjcncxtbqwauw.supabase.co/storage/v1/object/public/cms-media/agents/1782968861479-My_headshots__3_.jpeg"
+    },
+    {
+      "id": "8b309d16-bb59-4a6b-b539-b3a78879b803",
+      "storagePath": "brand/1782970119480-greenwood_logo.png",
+      "folder": "brand",
+      "kind": "image",
+      "fileName": "greenwood logo.png",
+      "sourceUrl": "https://ugbbfcerjcncxtbqwauw.supabase.co/storage/v1/object/public/cms-media/brand/1782970119480-greenwood_logo.png"
+    },
+    {
+      "id": "cacf3fc5-a5d6-4c9a-b336-6de5484a5eec",
+      "storagePath": "brand/1782970153078-Favicon.png",
+      "folder": "brand",
+      "kind": "image",
+      "fileName": "Favicon.png",
+      "sourceUrl": "https://ugbbfcerjcncxtbqwauw.supabase.co/storage/v1/object/public/cms-media/brand/1782970153078-Favicon.png"
+    }
+  ],
+  "externalImages": [
+    { "sourceUrl": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80", "storagePath": "properties/photo-1441986300917-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80", "storagePath": "properties/photo-1484154218962-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80", "storagePath": "properties/photo-1493809842364-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80", "storagePath": "properties/photo-1497366216548-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&q=80", "storagePath": "properties/photo-1500382017468-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80", "storagePath": "properties/photo-1502672260266-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80", "storagePath": "properties/photo-1502672260266-w800.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80", "storagePath": "properties/photo-1502672260266-w600.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1200&q=80", "storagePath": "properties/photo-1505693416388-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80", "storagePath": "properties/photo-1522708323590-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80", "storagePath": "properties/photo-1522708323590-w600.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=1200&q=80", "storagePath": "properties/photo-1560185127-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80", "storagePath": "properties/photo-1560448204-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80", "storagePath": "properties/photo-1560448204-w800.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=1200&q=80", "storagePath": "properties/photo-1600047509358-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&q=80", "storagePath": "properties/photo-1600047509807-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80", "storagePath": "properties/photo-1600566753190-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80", "storagePath": "properties/photo-1600585154340-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80", "storagePath": "properties/photo-1600585154340-w800.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&q=80", "storagePath": "properties/photo-1600585154526-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80", "storagePath": "properties/photo-1600596542815-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80", "storagePath": "properties/photo-1600596542815-w800.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80", "storagePath": "properties/photo-1600596542815-w600.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=1200&q=80", "storagePath": "properties/photo-1600607687644-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80", "storagePath": "properties/photo-1600607687939-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80", "storagePath": "properties/photo-1600607687939-w800.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80", "storagePath": "properties/photo-1613490493576-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80", "storagePath": "properties/photo-1613490493576-w800.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&q=80", "storagePath": "properties/photo-1613490493576-w600.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1200&q=80", "storagePath": "properties/photo-1613977257363-w1200.jpg" },
+    { "sourceUrl": "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80", "storagePath": "properties/photo-1613977257363-w800.jpg" }
+  ],
+  "siteSettings": {
+    "logo_light_url": "brand/1782970119480-greenwood_logo.png",
+    "logo_dark_url": "brand/1782970119480-greenwood_logo.png",
+    "favicon_url": "brand/1782970153078-Favicon.png"
+  }
+}

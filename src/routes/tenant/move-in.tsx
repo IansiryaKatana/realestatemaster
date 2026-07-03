@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { useTenantAuth } from '@/contexts/TenantAuthContext'
 import { fetchMoveInChecklist, tenancyKeys } from '@/lib/tenancy/tenancyQueries'
 import { tryGetSupabase } from '@/integrations/supabase/client'
+import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
 import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/tenant/move-in')({
@@ -48,23 +49,34 @@ function TenantMoveInPage() {
       <h1 className="font-display text-3xl font-extrabold text-text-brown">Move-in checklist</h1>
       {isLoading ? (
         <p className="text-muted">Loading checklist…</p>
-      ) : items.length === 0 ? (
-        <p className="text-sm text-muted">Your move-in checklist will appear here after lease activation.</p>
       ) : (
-        <ul className="space-y-3">
+        <PortalDataTable
+          columns={[
+            { key: 'item', label: 'Item' },
+            { key: 'status', label: 'Status' },
+            { key: 'actions', label: '', className: 'text-right' },
+          ]}
+          isEmpty={items.length === 0}
+          emptyMessage="Your move-in checklist will appear here after lease activation."
+        >
           {items.map((item) => (
-            <li key={item.id} className="flex items-center justify-between rounded-xl border border-[#e8e0d4] bg-white p-4">
-              <span className={item.done ? 'text-muted line-through' : 'font-medium'}>{item.label}</span>
-              <Button
-                size="sm"
-                variant={item.done ? 'outline' : 'default'}
-                onClick={() => void toggleItem(item.id, !item.done)}
-              >
-                {item.done ? 'Undo' : 'Mark done'}
-              </Button>
-            </li>
+            <PortalTableRow key={item.id}>
+              <PortalTableCell className={item.done ? 'text-muted line-through' : 'font-medium'}>
+                {item.label}
+              </PortalTableCell>
+              <PortalTableCell className="capitalize">{item.done ? 'Done' : 'Pending'}</PortalTableCell>
+              <PortalTableCell className="text-right">
+                <Button
+                  size="sm"
+                  variant={item.done ? 'outline' : 'default'}
+                  onClick={() => void toggleItem(item.id, !item.done)}
+                >
+                  {item.done ? 'Undo' : 'Mark done'}
+                </Button>
+              </PortalTableCell>
+            </PortalTableRow>
           ))}
-        </ul>
+        </PortalDataTable>
       )}
     </div>
   )

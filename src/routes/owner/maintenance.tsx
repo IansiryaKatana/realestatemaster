@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useLandlordAuth } from '@/contexts/LandlordAuthContext'
 import { fetchServiceRequests } from '@/lib/tenancy/tenancyQueries'
 import { PortalStatusBadge } from '@/portals/components/PortalStatusBadge'
+import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
 
 export const Route = createFileRoute('/owner/maintenance')({
   component: OwnerMaintenancePage,
@@ -23,23 +24,29 @@ function OwnerMaintenancePage() {
       <p className="text-sm text-muted">Read-only view of maintenance work orders on properties you own.</p>
       {isLoading ? (
         <p className="text-muted">Loading…</p>
-      ) : requests.length === 0 ? (
-        <p className="text-sm text-muted">No maintenance requests on your properties.</p>
       ) : (
-        <div className="space-y-3">
+        <PortalDataTable
+          columns={[
+            { key: 'title', label: 'Issue' },
+            { key: 'property', label: 'Property' },
+            { key: 'description', label: 'Details' },
+            { key: 'status', label: 'Status' },
+          ]}
+          isEmpty={requests.length === 0}
+          emptyMessage="No maintenance requests on your properties."
+          minWidth="720px"
+        >
           {requests.map((req) => (
-            <div key={req.id} className="rounded-xl border border-[#e8e0d4] bg-white p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-medium">{req.title}</p>
-                  <p className="text-sm text-muted">{req.products?.name ?? 'Property'}</p>
-                  <p className="mt-2 text-sm">{req.description}</p>
-                </div>
+            <PortalTableRow key={req.id}>
+              <PortalTableCell className="font-medium">{req.title}</PortalTableCell>
+              <PortalTableCell>{req.products?.name ?? 'Property'}</PortalTableCell>
+              <PortalTableCell className="max-w-md text-muted">{req.description}</PortalTableCell>
+              <PortalTableCell>
                 <PortalStatusBadge status={req.status} />
-              </div>
-            </div>
+              </PortalTableCell>
+            </PortalTableRow>
           ))}
-        </div>
+        </PortalDataTable>
       )}
     </div>
   )

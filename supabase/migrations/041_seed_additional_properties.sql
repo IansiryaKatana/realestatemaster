@@ -280,7 +280,7 @@ insert into public.products (
   'jvc-corner-villa-5br',
   'Large corner villa with upgraded kitchen and landscaped plot.',
   4200000, 4500000,
-  'https://images.unsplash.com/photo-1605276374104-dee2cf0e3c0a?w=1200&q=80',
+  'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
   '[]'::jsonb,
   'EA-S-2005', 'sale',
   (select id from public.property_types where slug = 'villa'),

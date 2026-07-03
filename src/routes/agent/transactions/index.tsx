@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { tryGetSupabase } from '@/integrations/supabase/client'
 import { useAgentAuth } from '@/contexts/AgentAuthContext'
 import { transactionStatusLabel } from '@/lib/property/transactionStatuses'
+import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
 import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/agent/transactions/')({
@@ -28,23 +29,37 @@ function AgentTransactionsPage() {
   return (
     <div className="space-y-4">
       <h1 className="font-display text-2xl font-extrabold text-text-brown">Transactions</h1>
-      {isLoading ? <p className="text-muted">Loading…</p> : (
-        <div className="space-y-3">
+      {isLoading ? (
+        <p className="text-muted">Loading…</p>
+      ) : (
+        <PortalDataTable
+          columns={[
+            { key: 'property', label: 'Property' },
+            { key: 'reference', label: 'Reference' },
+            { key: 'status', label: 'Status' },
+            { key: 'actions', label: '', className: 'text-right' },
+          ]}
+          isEmpty={transactions.length === 0}
+          emptyMessage="No transactions assigned to you."
+        >
           {transactions.map((tx) => {
             const property = tx.products as { name?: string } | null
             return (
-              <article key={tx.id} className="flex flex-col gap-3 rounded-xl border border-[#e8e0d4] bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="font-semibold text-text-brown">{property?.name}</p>
-                  <p className="text-sm text-muted">{tx.transaction_number} · {transactionStatusLabel(tx.status)}</p>
-                </div>
-                <Button asChild size="sm" variant="outline">
-                  <Link to="/agent/transactions/$transactionId" params={{ transactionId: tx.id }}>Manage</Link>
-                </Button>
-              </article>
+              <PortalTableRow key={tx.id}>
+                <PortalTableCell className="font-semibold text-text-brown">{property?.name ?? '—'}</PortalTableCell>
+                <PortalTableCell className="text-muted">{tx.transaction_number}</PortalTableCell>
+                <PortalTableCell>{transactionStatusLabel(tx.status)}</PortalTableCell>
+                <PortalTableCell className="text-right">
+                  <Button asChild size="sm" variant="outline">
+                    <Link to="/agent/transactions/$transactionId" params={{ transactionId: tx.id }}>
+                      Manage
+                    </Link>
+                  </Button>
+                </PortalTableCell>
+              </PortalTableRow>
             )
           })}
-        </div>
+        </PortalDataTable>
       )}
     </div>
   )

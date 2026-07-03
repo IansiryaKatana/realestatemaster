@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useLandlordAuth } from '@/contexts/LandlordAuthContext'
 import { fetchLandlordStatements } from '@/lib/tenancy/tenancyQueries'
+import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
 import { useFormatPrice } from '@/lib/currency'
 import { formatOrdinalShortDate } from '@/lib/utils'
 
@@ -24,28 +25,39 @@ function OwnerStatementsPage() {
       <h1 className="font-display text-3xl font-extrabold text-text-brown">Financial statements</h1>
       {isLoading ? (
         <p className="text-muted">Loading statements…</p>
-      ) : statements.length === 0 ? (
-        <p className="text-sm text-muted">No statements generated yet. Your agency will publish monthly reports here.</p>
       ) : (
-        <div className="space-y-3">
+        <PortalDataTable
+          columns={[
+            { key: 'period', label: 'Period' },
+            { key: 'gross', label: 'Gross rent' },
+            { key: 'fees', label: 'Fees' },
+            { key: 'net', label: 'Net payout' },
+            { key: 'pdf', label: 'PDF' },
+          ]}
+          isEmpty={statements.length === 0}
+          emptyMessage="No statements generated yet. Your agency will publish monthly reports here."
+          minWidth="720px"
+        >
           {statements.map((stmt) => (
-            <div key={stmt.id} className="rounded-xl border border-[#e8e0d4] bg-white p-4">
-              <p className="font-semibold">
+            <PortalTableRow key={stmt.id}>
+              <PortalTableCell className="font-semibold">
                 {formatOrdinalShortDate(stmt.period_start)} — {formatOrdinalShortDate(stmt.period_end)}
-              </p>
-              <div className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
-                <p>Gross rent: {formatPrice(Number(stmt.gross_rent))}</p>
-                <p>Fees: {formatPrice(Number(stmt.fees))}</p>
-                <p className="font-medium">Net payout: {formatPrice(Number(stmt.net_payout))}</p>
-              </div>
-              {stmt.pdf_url ? (
-                <a href={stmt.pdf_url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-cta-brown underline">
-                  Download PDF
-                </a>
-              ) : null}
-            </div>
+              </PortalTableCell>
+              <PortalTableCell>{formatPrice(Number(stmt.gross_rent))}</PortalTableCell>
+              <PortalTableCell>{formatPrice(Number(stmt.fees))}</PortalTableCell>
+              <PortalTableCell className="font-medium">{formatPrice(Number(stmt.net_payout))}</PortalTableCell>
+              <PortalTableCell>
+                {stmt.pdf_url ? (
+                  <a href={stmt.pdf_url} target="_blank" rel="noreferrer" className="text-cta-brown underline">
+                    Download
+                  </a>
+                ) : (
+                  '—'
+                )}
+              </PortalTableCell>
+            </PortalTableRow>
           ))}
-        </div>
+        </PortalDataTable>
       )}
     </div>
   )

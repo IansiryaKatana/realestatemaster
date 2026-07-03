@@ -17,6 +17,7 @@ import { transactionStatusLabel } from '@/lib/property/transactionStatuses'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { FileUploadField } from '@/portals/components/FileUploadField'
 
 export const Route = createFileRoute('/agent/transactions/$transactionId')({
   component: AgentTransactionDetailPage,
@@ -221,16 +222,27 @@ function AgentTransactionDetailPage() {
       {data.generated.length > 0 ? (
         <section className="rounded-xl border border-[#e8e0d4] bg-white p-4">
           <h2 className="font-semibold">Generated contracts</h2>
-          <Input className="mt-2" placeholder="Contract PDF URL (optional)" onBlur={async (e) => {
-            if (!e.target.value.trim()) return
-            const result = await rpcAgentGenerateContract({
-              transactionId,
-              fileUrl: e.target.value.trim(),
-              fileName: 'contract.pdf',
-            })
-            if (!result.ok) toast.error(result.error)
-            else { toast.success('Contract URL saved'); void refresh() }
-          }} />
+          <div className="mt-3">
+            <FileUploadField
+              label="Upload contract PDF"
+              bucket="contracts"
+              folder={transactionId}
+              accept="application/pdf"
+              onChange={async (url) => {
+                if (!url) return
+                const result = await rpcAgentGenerateContract({
+                  transactionId,
+                  fileUrl: url,
+                  fileName: 'contract.pdf',
+                })
+                if (!result.ok) toast.error(result.error)
+                else {
+                  toast.success('Contract uploaded')
+                  void refresh()
+                }
+              }}
+            />
+          </div>
         </section>
       ) : null}
     </div>

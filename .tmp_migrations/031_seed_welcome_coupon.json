@@ -1,1 +1,0 @@
-{"file":"031_seed_welcome_coupon.sql","name":"031_seed_welcome_coupon","query":"-- Demo coupon for launch\r\ninsert into public.coupons (code, description, discount_type, discount_value, min_subtotal, is_active)\r\nvalues ('WELCOME10', '10% off your first order', 'percent', 10, 50, true)\r\non conflict (code) do nothing;\r\n"}

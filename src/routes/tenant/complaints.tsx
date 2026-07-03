@@ -6,6 +6,7 @@ import { useTenantAuth } from '@/contexts/TenantAuthContext'
 import { createServiceRequest } from '@/lib/tenancy/tenancyRpc'
 import { fetchServiceRequests, tenancyKeys } from '@/lib/tenancy/tenancyQueries'
 import { PortalStatusBadge } from '@/portals/components/PortalStatusBadge'
+import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -50,33 +51,49 @@ function TenantComplaintsPage() {
       <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 rounded-xl border border-[#e8e0d4] bg-white p-5">
         <h2 className="font-semibold">File a complaint</h2>
         <Input placeholder="Subject" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <select className="w-full rounded-md border border-input px-3 py-2 text-sm" value={category} onChange={(e) => setCategory(e.target.value)}>
+        <select
+          className="w-full rounded-md border border-input px-3 py-2 text-sm"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
           <option value="general">General</option>
           <option value="noise">Noise</option>
           <option value="neighbour">Neighbour</option>
           <option value="building">Building management</option>
         </select>
-        <textarea className="min-h-24 w-full rounded-md border border-input px-3 py-2 text-sm" placeholder="Describe the issue" value={description} onChange={(e) => setDescription(e.target.value)} required />
-        <Button type="submit" disabled={submitting}>{submitting ? 'Submitting…' : 'Submit complaint'}</Button>
+        <textarea
+          className="min-h-24 w-full rounded-md border border-input px-3 py-2 text-sm"
+          placeholder="Describe the issue"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
+        <Button type="submit" disabled={submitting}>
+          {submitting ? 'Submitting…' : 'Submit complaint'}
+        </Button>
       </form>
 
       <div className="space-y-3">
         <h2 className="font-semibold">Your complaints</h2>
-        {complaints.length === 0 ? (
-          <p className="text-sm text-muted">No complaints filed yet.</p>
-        ) : (
-          complaints.map((c) => (
-            <div key={c.id} className="rounded-xl border border-[#e8e0d4] bg-white p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-medium">{c.title}</p>
-                  <p className="mt-1 text-sm text-muted">{c.description}</p>
-                </div>
+        <PortalDataTable
+          columns={[
+            { key: 'title', label: 'Subject' },
+            { key: 'description', label: 'Details' },
+            { key: 'status', label: 'Status' },
+          ]}
+          isEmpty={complaints.length === 0}
+          emptyMessage="No complaints filed yet."
+        >
+          {complaints.map((c) => (
+            <PortalTableRow key={c.id}>
+              <PortalTableCell className="font-medium">{c.title}</PortalTableCell>
+              <PortalTableCell className="max-w-md text-muted">{c.description}</PortalTableCell>
+              <PortalTableCell>
                 <PortalStatusBadge status={c.status} />
-              </div>
-            </div>
-          ))
-        )}
+              </PortalTableCell>
+            </PortalTableRow>
+          ))}
+        </PortalDataTable>
       </div>
     </div>
   )

@@ -5,10 +5,10 @@ import { rpcClientRequestContract, rpcCreatePropertyInvoice, rpcRecordPropertyPa
 import { TransactionStatusStepper } from '@/components/account/TransactionStatusStepper'
 import { useFormatPrice } from '@/lib/currency'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { tryGetSupabase } from '@/integrations/supabase/client'
 import { useStorefrontAuth } from '@/contexts/StorefrontAuthContext'
 import { useCms } from '@/contexts/CmsContext'
+import { FileUploadField } from '@/portals/components/FileUploadField'
 
 type TransactionDetailContentProps = {
   detail: PropertyTransactionDetail
@@ -61,30 +61,21 @@ export function TransactionDetailContent({ detail, onRefresh }: TransactionDetai
     onRefresh()
   }
 
-  async function uploadSignedContract(file: File) {
+  async function saveSignedContract(url: string, fileName: string) {
     const supabase = tryGetSupabase()
     if (!supabase || !user) return
 
     setUploading(true)
-    const path = `${detail.id}/${Date.now()}-${file.name}`
-    const { error: uploadError } = await supabase.storage.from('contracts').upload(path, file)
-    if (uploadError) {
-      setUploading(false)
-      toast.error(uploadError.message)
-      return
-    }
-
-    const { data: urlData } = supabase.storage.from('contracts').getPublicUrl(path)
     const { error: insertError } = await supabase.from('uploaded_contracts').insert({
       transaction_id: detail.id,
       client_user_id: user.id,
       generated_contract_id: detail.generated_contracts[0]?.id ?? null,
-      file_url: urlData.publicUrl,
-      file_name: file.name,
+      file_url: url,
+      file_name: fileName,
       review_status: 'under_review',
     })
-
     setUploading(false)
+
     if (insertError) {
       toast.error(insertError.message)
       return
@@ -163,16 +154,18 @@ export function TransactionDetailContent({ detail, onRefresh }: TransactionDetai
       {canUploadContract ? (
         <section className="rounded-xl border border-[#e8e0d4] p-4">
           <h3 className="font-semibold text-text-brown">Upload signed contract</h3>
-          <input
-            type="file"
-            accept="application/pdf,image/*"
-            className="mt-3 block w-full text-sm"
-            disabled={uploading}
-            onChange={(e) => {
-              const file = e.target.files?.[0]
-              if (file) void uploadSignedContract(file)
-            }}
-          />
+          <div className="mt-3">
+            <FileUploadField
+              bucket="contracts"
+              folder={detail.id}
+              accept="application/pdf,image/*"
+              disabled={uploading}
+              onChange={(url) => {
+                if (!url) return
+                void saveSignedContract(url, 'signed-contract')
+              }}
+            />
+          </div>
         </section>
       ) : null}
 

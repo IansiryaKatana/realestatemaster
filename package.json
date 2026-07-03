@@ -17,7 +17,9 @@
     "start": "cross-env NODE_ENV=production node .nitro-output/server/index.mjs",
     "start:hostinger": "cross-env NODE_ENV=production node .nitro-output/server/index.mjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "download:media": "node scripts/download-seed-media.mjs",
+    "seed:media": "node scripts/seed-storage.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

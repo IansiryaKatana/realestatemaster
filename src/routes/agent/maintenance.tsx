@@ -5,6 +5,7 @@ import { useAgentAuth } from '@/contexts/AgentAuthContext'
 import { fetchServiceRequests, tenancyKeys } from '@/lib/tenancy/tenancyQueries'
 import { updateServiceRequestStatus } from '@/lib/tenancy/tenancyRpc'
 import { PortalStatusBadge } from '@/portals/components/PortalStatusBadge'
+import { PortalDataTable, PortalTableCell, PortalTableRow } from '@/portals/components/PortalDataTable'
 import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/agent/maintenance')({
@@ -38,31 +39,44 @@ function AgentMaintenancePage() {
       <h1 className="font-display text-3xl font-extrabold text-text-brown">Maintenance</h1>
       {isLoading ? (
         <p className="text-muted">Loading…</p>
-      ) : requests.length === 0 ? (
-        <p className="text-sm text-muted">No maintenance requests assigned to you.</p>
       ) : (
-        <div className="space-y-3">
+        <PortalDataTable
+          columns={[
+            { key: 'title', label: 'Issue' },
+            { key: 'property', label: 'Property' },
+            { key: 'description', label: 'Details' },
+            { key: 'status', label: 'Status' },
+            { key: 'actions', label: '', className: 'text-right' },
+          ]}
+          isEmpty={requests.length === 0}
+          emptyMessage="No maintenance requests assigned to you."
+          minWidth="800px"
+        >
           {requests.map((req) => (
-            <div key={req.id} className="rounded-xl border border-[#e8e0d4] bg-white p-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="font-semibold">{req.title}</p>
-                  <p className="text-sm text-muted">{req.products?.name ?? 'Property'}</p>
-                  <p className="mt-2 text-sm">{req.description}</p>
-                </div>
+            <PortalTableRow key={req.id}>
+              <PortalTableCell className="font-semibold">{req.title}</PortalTableCell>
+              <PortalTableCell>{req.products?.name ?? 'Property'}</PortalTableCell>
+              <PortalTableCell className="max-w-xs text-muted">{req.description}</PortalTableCell>
+              <PortalTableCell>
                 <PortalStatusBadge status={req.status} />
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {req.status === 'open' ? (
-                  <Button size="sm" variant="outline" onClick={() => void setStatus(req.id, 'in_progress')}>Start work</Button>
-                ) : null}
-                {req.status === 'in_progress' ? (
-                  <Button size="sm" onClick={() => void setStatus(req.id, 'resolved')}>Mark resolved</Button>
-                ) : null}
-              </div>
-            </div>
+              </PortalTableCell>
+              <PortalTableCell className="text-right">
+                <div className="flex flex-wrap justify-end gap-2">
+                  {req.status === 'open' ? (
+                    <Button size="sm" variant="outline" onClick={() => void setStatus(req.id, 'in_progress')}>
+                      Start work
+                    </Button>
+                  ) : null}
+                  {req.status === 'in_progress' ? (
+                    <Button size="sm" onClick={() => void setStatus(req.id, 'resolved')}>
+                      Mark resolved
+                    </Button>
+                  ) : null}
+                </div>
+              </PortalTableCell>
+            </PortalTableRow>
           ))}
-        </div>
+        </PortalDataTable>
       )}
     </div>
   )

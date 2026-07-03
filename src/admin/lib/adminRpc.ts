@@ -242,25 +242,6 @@ export async function listProductAmenityIds(productId: string) {
   return result.ids ?? []
 }
 
-export async function saveAdminProduct(payload: {
-  product: Record<string, unknown>
-  variants: Record<string, unknown>[]
-  amenityIds: string[]
-  productId?: string | null
-}) {
-  const supabase = getClient()
-  const { data, error } = await supabase.rpc('rpc_save_admin_product', {
-    p_product: payload.product,
-    p_variants: payload.variants,
-    p_amenity_ids: payload.amenityIds,
-    p_product_id: payload.productId ?? null,
-  })
-  if (error) throw new Error(error.message)
-  const result = data as RpcOk<{ id: string }> | RpcErr
-  if (!result?.ok) throw new Error(result.error ?? 'Failed to save product')
-  return result.id
-}
-
 export async function adminBulkUpdateProducts(ids: string[], patch: Record<string, unknown>) {
   const supabase = getClient()
   const { data, error } = await supabase.rpc('rpc_admin_bulk_update_products', { p_ids: ids, p_patch: patch })
