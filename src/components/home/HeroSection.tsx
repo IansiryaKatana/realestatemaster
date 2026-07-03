@@ -72,12 +72,12 @@ export function HeroSection() {
       </div>
 
       {slides.length > 1 && (
-        <div className="hero-controls absolute bottom-7 right-12 z-20 flex gap-2">
+        <div className="hero-controls absolute bottom-7 left-8 z-20 flex gap-2 md:left-auto md:right-12">
           <button
             type="button"
             aria-label="Previous slide"
             onClick={() => go(-1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-sm bg-black text-white"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -85,7 +85,7 @@ export function HeroSection() {
             type="button"
             aria-label="Next slide"
             onClick={() => go(1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-sm bg-black text-white"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

@@ -36,7 +36,7 @@ function LifestyleCard({
           asChild
           variant="pill"
           size="sm"
-          className="pointer-events-none w-fit transition group-hover:-translate-y-1"
+          className="pointer-events-none w-fit rounded-sm transition group-hover:-translate-y-1"
         >
           <span>{ctaLabel}</span>
         </Button>

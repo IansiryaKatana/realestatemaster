@@ -3293,7 +3293,7 @@ export type Database = {
         Returns: Json
       }
       rpc_submit_contact_form: {
-        Args: { p_email: string; p_message: string; p_name: string }
+        Args: { p_email: string; p_message: string; p_name: string; p_phone?: string }
         Returns: Json
       }
       rpc_submit_product_review: {

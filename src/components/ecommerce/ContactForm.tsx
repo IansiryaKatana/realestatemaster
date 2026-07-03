@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { contactSchema, type ContactFormValues } from '@/lib/validators/contact.schema'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { FormPhoneInput } from '@/components/ui/phone-input-field'
 
 import { cn } from '@/lib/utils'
 
@@ -16,10 +17,11 @@ export function ContactForm({ className }: ContactFormProps) {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
-    defaultValues: { name: '', email: '', message: '' },
+    defaultValues: { name: '', email: '', phone: '', message: '' },
   })
 
   async function onSubmit(values: ContactFormValues) {
@@ -56,6 +58,13 @@ export function ContactForm({ className }: ContactFormProps) {
         <label className="mb-1 block text-sm font-semibold">Email</label>
         <Input type="email" {...register('email')} placeholder="you@example.com" />
         {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
+      </div>
+      <div>
+        <label className="mb-1 block text-sm font-semibold" htmlFor="contact-phone">
+          Phone
+        </label>
+        <FormPhoneInput control={control} fieldName="phone" id="contact-phone" variant="public" />
+        {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>}
       </div>
       <div>
         <label className="mb-1 block text-sm font-semibold">Message</label>

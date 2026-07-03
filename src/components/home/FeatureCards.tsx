@@ -20,7 +20,7 @@ function chunkCards<T>(items: T[], size: number): T[][] {
   return pages
 }
 
-function FeatureCardArticle({ card, index }: { card: FeatureCard; index: number }) {
+function FeatureCardArticle({ card }: { card: FeatureCard }) {
   return (
     <article className="feature-card group relative aspect-[3/4] w-full overflow-hidden rounded-[14px]">
       <img
@@ -29,13 +29,8 @@ function FeatureCardArticle({ card, index }: { card: FeatureCard; index: number 
         className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/10" />
-      <div
-        className={cn(
-          'relative flex h-full flex-col justify-end p-6 text-white',
-          index === 2 ? 'items-start text-left' : '',
-        )}
-      >
-        <h3 className="mb-4 max-w-[90%] font-display text-3xl font-extrabold leading-tight">
+      <div className="relative flex h-full flex-col items-start justify-end p-6 text-left text-white">
+        <h3 className="mb-4 max-w-[90%] font-display text-base font-extrabold leading-tight md:text-lg lg:text-xl">
           {card.title}
         </h3>
         <Button
@@ -114,7 +109,7 @@ function FeatureCardsMobileCarousel({ cards }: { cards: FeatureCard[] }) {
         >
           {cards.map((card, i) => (
             <div key={card.id} className="w-full shrink-0">
-              <FeatureCardArticle card={card} index={i} />
+              <FeatureCardArticle card={card} />
             </div>
           ))}
         </div>
@@ -146,7 +141,7 @@ function FeatureCardsDesktop({ cards }: { cards: FeatureCard[] }) {
     return (
       <div className="hidden gap-6 lg:grid lg:grid-cols-3">
         {cards.map((card, i) => (
-          <FeatureCardArticle key={card.id} card={card} index={i} />
+          <FeatureCardArticle key={card.id} card={card} />
         ))}
       </div>
     )
@@ -172,11 +167,7 @@ function FeatureCardsDesktop({ cards }: { cards: FeatureCard[] }) {
           {pages.map((pageCards, pageIdx) => (
             <div key={pageIdx} className="grid w-full shrink-0 grid-cols-3 gap-6">
               {pageCards.map((card, i) => (
-                <FeatureCardArticle
-                  key={card.id}
-                  card={card}
-                  index={pageIdx * DESKTOP_PAGE_SIZE + i}
-                />
+                <FeatureCardArticle key={card.id} card={card} />
               ))}
             </div>
           ))}

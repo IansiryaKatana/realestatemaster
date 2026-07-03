@@ -39,7 +39,9 @@ export function submissionSummary(formType: string, payload: SubmissionPayload):
 
 export function submissionContact(formType: string, payload: SubmissionPayload): string {
   if (formType === 'callback_request') return payload.phone ?? '—'
-  if (formType === 'contact') return payload.email ?? '—'
+  if (formType === 'contact') {
+    return payload.phone ?? payload.email ?? '—'
+  }
   return payload.phone ?? payload.email ?? '—'
 }
 
@@ -81,6 +83,7 @@ export function submissionDetailFields(
     return [
       { label: 'Name', value: payload.name ?? '—' },
       { label: 'Email', value: payload.email ?? '—' },
+      { label: 'Phone', value: payload.phone ?? '—' },
       { label: 'Message', value: payload.message ?? '—' },
     ]
   }

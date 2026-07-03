@@ -22,6 +22,7 @@ Deno.serve(async (req) => {
     const body = await req.json()
     const name = String(body.name ?? '').trim()
     const email = String(body.email ?? '').trim()
+    const phone = String(body.phone ?? '').trim()
     const message = String(body.message ?? '').trim()
 
     if (!name || !message) {
@@ -40,6 +41,7 @@ Deno.serve(async (req) => {
       p_name: name,
       p_email: email,
       p_message: message,
+      p_phone: phone || null,
     })
 
     if (error) {
@@ -63,6 +65,7 @@ Deno.serve(async (req) => {
       await sendTemplateEmail(supabase, 'contact_form_admin', notifyEmail, {
         customer_name: name,
         customer_email: email,
+        customer_phone: phone || '—',
         message_body: message,
         message_html: messageHtml,
       }, { replyTo: email })

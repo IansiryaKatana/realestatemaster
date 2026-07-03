@@ -3,6 +3,7 @@ import type { Product } from '@/data/static-cms'
 import { propertyPrimaryActionLabel } from '@/lib/property/formatProperty'
 import { useFormatPrice } from '@/lib/currency'
 import { BookViewingDialog } from '@/components/property/BookViewingDialog'
+import { PropertyQuickInquiryDialog } from '@/components/property/PropertyQuickInquiryDialog'
 import { Button } from '@/components/ui/button'
 
 type MobileStickyPropertyBarProps = {
@@ -33,7 +34,7 @@ export function MobileStickyPropertyBar({ product }: MobileStickyPropertyBarProp
       </div>
 
       <BookViewingDialog product={product} open={viewingOpen} onOpenChange={setViewingOpen} />
-      <BookViewingDialog
+      <PropertyQuickInquiryDialog
         product={product}
         open={applyOpen}
         onOpenChange={setApplyOpen}
